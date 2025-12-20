@@ -4,7 +4,7 @@ import { env } from '$env/dynamic/private';
 import { resolve } from 'path';
 import * as schema from './schema';
 
-let url = env.DATABASE_URL
+let url = env.DATABASE_URL //in production add it to build envs
 const absolutePath = resolve(url);
 url = `file://${absolutePath}`;
 

@@ -1,4 +1,5 @@
 import type { Session, User } from 'better-auth';
+import type { Playlist } from './lib/server/db/schema';
 
 declare global {
 	namespace App {
