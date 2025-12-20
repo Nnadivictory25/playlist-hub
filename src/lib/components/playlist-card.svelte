@@ -22,11 +22,10 @@
 		apple: '/icons8-apple-music-48.png'
 	};
 
-	const queryParams = $derived(getQueryParams(page.url));
 	const { mutate: toggleLike } = useMutateLike({
 		playlistId: playlist.id,
 		userId,
-		queryParams,
+		queryParams: getQueryParams(page.url),
 		queryClient
 	});
 </script>
