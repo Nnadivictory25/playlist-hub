@@ -1,5 +1,25 @@
 import { relations, sql } from 'drizzle-orm';
-import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
+import {
+	sqliteTable,
+	text,
+	integer,
+	index,
+	uniqueIndex,
+	customType
+} from 'drizzle-orm/sqlite-core';
+
+const jsonArray = <TData>(name: string) =>
+	customType<{ data: TData[]; driverData: string }>({
+		dataType() {
+			return 'text';
+		},
+		toDriver(value: TData[]): string {
+			return JSON.stringify(value);
+		},
+		fromDriver(value: string): TData[] {
+			return JSON.parse(value);
+		}
+	})(name);
 
 const timestamps = {
 	createdAt: integer('created_at', { mode: 'timestamp_ms' })
@@ -12,21 +32,52 @@ const timestamps = {
 };
 
 export const playlists = sqliteTable('playlists', {
-	id: text('id').primaryKey(),
+	id: integer('id').primaryKey({ autoIncrement: true }),
 	name: text('name').notNull(),
 	description: text('description'),
+	likes: integer('likes').notNull().default(0),
 	songCount: integer('song_count').notNull().default(0),
 	imageUrl: text('image_url').notNull(),
+	source: text('source', { enum: ['spotify', 'youtube', 'apple'] })
+		.notNull()
+		.default('spotify'),
+	genre: jsonArray('genre').$type<string[]>(),
+	url: text('url').notNull(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
 	...timestamps
 });
 
+export type Playlist = typeof playlists.$inferSelect;
+export type NewPlaylist = typeof playlists.$inferInsert;
+
+export const playlistLikes = sqliteTable(
+	'playlist_likes',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		playlistId: integer('playlist_id')
+			.notNull()
+			.references(() => playlists.id, { onDelete: 'cascade' }),
+		userId: text('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		...timestamps
+	},
+	(table) => [
+		uniqueIndex('playlist_likes_playlistId_userId_unique').on(table.playlistId, table.userId),
+		index('playlist_likes_playlistId_idx').on(table.playlistId)
+	]
+);
+
+export type PlaylistLike = typeof playlistLikes.$inferSelect;
+export type NewPlaylistLike = typeof playlistLikes.$inferInsert;
+
 export const users = sqliteTable('users', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
+	country: text('country'),
 	emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
 	image: text('image'),
 	...timestamps
@@ -85,9 +136,30 @@ export const verifications = sqliteTable(
 	(table) => [index('verification_identifier_idx').on(table.identifier)]
 );
 
+export const playlistsRelations = relations(playlists, ({ many, one }) => ({
+	likes: many(playlistLikes),
+	user: one(users, {
+		fields: [playlists.userId],
+		references: [users.id]
+	})
+}));
+
+export const playlistLikesRelations = relations(playlistLikes, ({ one }) => ({
+	playlist: one(playlists, {
+		fields: [playlistLikes.playlistId],
+		references: [playlists.id]
+	}),
+	user: one(users, {
+		fields: [playlistLikes.userId],
+		references: [users.id]
+	})
+}));
+
 export const usersRelations = relations(users, ({ many }) => ({
 	sessions: many(sessions),
-	accounts: many(accounts)
+	accounts: many(accounts),
+	playlists: many(playlists),
+	playlistLikes: many(playlistLikes)
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({

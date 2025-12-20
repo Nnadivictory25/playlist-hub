@@ -1,4 +1,5 @@
-import type { Session, User } from "better-auth";
+import type { Session, User } from 'better-auth';
+import type { Database } from './lib/server/db/index';
 
 declare global {
 	namespace App {
@@ -11,6 +12,12 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	type GetPlaylistsResult = {
+		playlists: Playlist[];
+		userLikedPlaylists: number[];
+		totalLikes: number;
+	};
 }
 
 export { };

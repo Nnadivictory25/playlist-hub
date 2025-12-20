@@ -1,11 +1,10 @@
 import { defineConfig } from 'drizzle-kit';
+const DATABASE_URL = process.env.DATABASE_URL;
 
-if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+if (!DATABASE_URL) throw new Error('DATABASE_URL is not set');
 
 export default defineConfig({
 	schema: './src/lib/server/db/schema.ts',
 	dialect: 'sqlite',
-	dbCredentials: { url: process.env.DATABASE_URL },
-	verbose: true,
-	strict: true
+	dbCredentials: { url: DATABASE_URL },
 });

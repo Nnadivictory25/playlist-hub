@@ -1,10 +1,15 @@
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
-import * as schema from './schema';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 import { env } from '$env/dynamic/private';
+import { resolve } from 'path';
+import * as schema from './schema';
 
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+let url = env.DATABASE_URL;
+if (!url.startsWith('file:')) {
+    const absolutePath = resolve(url);
+    url = `file://${absolutePath}`;
+}
 
-const client = new Database(env.DATABASE_URL);
+export const dbClient = createClient({ url });
 
-export const db = drizzle(client, { schema });
+export const db = drizzle(dbClient, { schema });

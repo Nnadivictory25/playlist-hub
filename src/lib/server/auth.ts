@@ -2,8 +2,8 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { db } from './db';
-import { env } from '$env/dynamic/private';
 import { getRequestEvent } from '$app/server';
+import { env } from '$env/dynamic/private';
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env;
 

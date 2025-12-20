@@ -1,4 +1,4 @@
-import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import { db } from './index';
-
-migrate(db, { migrationsFolder: './drizzle' });
+import { migrate } from 'drizzle-orm/libsql/migrator';
+import { db } from '.';
+await migrate(db, { migrationsFolder: './drizzle' });
+console.log('Migrations applied ✅');

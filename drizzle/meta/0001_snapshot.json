@@ -1,8 +1,8 @@
 {
+  "id": "daf30b66-bf62-4f64-b696-271d829fac13",
+  "prevId": "1203ee87-4341-40fa-bf0b-a2c23c587822",
   "version": "6",
   "dialect": "sqlite",
-  "id": "1203ee87-4341-40fa-bf0b-a2c23c587822",
-  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "accounts": {
       "name": "accounts",
@@ -114,15 +114,15 @@
         "accounts_user_id_users_id_fk": {
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -191,28 +191,28 @@
         "playlist_likes_playlist_id_playlists_id_fk": {
           "name": "playlist_likes_playlist_id_playlists_id_fk",
           "tableFrom": "playlist_likes",
-          "tableTo": "playlists",
           "columnsFrom": [
             "playlist_id"
           ],
+          "tableTo": "playlists",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "playlist_likes_user_id_users_id_fk": {
           "name": "playlist_likes_user_id_users_id_fk",
           "tableFrom": "playlist_likes",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -317,15 +317,15 @@
         "playlists_user_id_users_id_fk": {
           "name": "playlists_user_id_users_id_fk",
           "tableFrom": "playlists",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -414,15 +414,15 @@
         "sessions_user_id_users_id_fk": {
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -572,9 +572,9 @@
   "views": {},
   "enums": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   },
   "internal": {
     "indexes": {}

@@ -16,12 +16,28 @@ CREATE TABLE `accounts` (
 );
 --> statement-breakpoint
 CREATE INDEX `account_userId_idx` ON `accounts` (`user_id`);--> statement-breakpoint
+CREATE TABLE `playlist_likes` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`playlist_id` integer NOT NULL,
+	`user_id` text NOT NULL,
+	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
+	FOREIGN KEY (`playlist_id`) REFERENCES `playlists`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `playlist_likes_playlistId_userId_unique` ON `playlist_likes` (`playlist_id`,`user_id`);--> statement-breakpoint
+CREATE INDEX `playlist_likes_playlistId_idx` ON `playlist_likes` (`playlist_id`);--> statement-breakpoint
 CREATE TABLE `playlists` (
-	`id` text PRIMARY KEY NOT NULL,
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`description` text,
+	`likes` integer DEFAULT 0 NOT NULL,
 	`song_count` integer DEFAULT 0 NOT NULL,
 	`image_url` text NOT NULL,
+	`source` text DEFAULT 'spotify' NOT NULL,
+	`genre` text,
+	`url` text NOT NULL,
 	`user_id` text NOT NULL,
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
 	`updated_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,
@@ -46,6 +62,7 @@ CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`email` text NOT NULL,
+	`country` text,
 	`email_verified` integer DEFAULT false NOT NULL,
 	`image` text,
 	`created_at` integer DEFAULT (cast(unixepoch('subsecond') * 1000 as integer)) NOT NULL,

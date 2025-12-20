@@ -12,7 +12,7 @@
         <span class="font-medium text-lg hidden lg:block">PlaylistHub</span>
     </a>
     <ul class="flex items-center gap-4 text-sm font-medium z-20">
-        <li><a href="/" class="hover:underline">Playlists</a></li>
+        <li><a href="/playlists" class="hover:underline">Playlists</a></li>
         {#if isSignedIn}
             <li><a href="/dashboard" class="primary rounded-full">Dashboard</a></li>
         {:else}

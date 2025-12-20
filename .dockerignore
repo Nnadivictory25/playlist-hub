@@ -1,0 +1,10 @@
+node_modules
+.DS_Store
+.git
+.env
+.env.*
+.svelte-kit
+build
+.vscode
+local.db
+*.sqlite
