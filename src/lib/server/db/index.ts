@@ -5,10 +5,9 @@ import { resolve } from 'path';
 import * as schema from './schema';
 
 let url = env.DATABASE_URL;
-if (!url.startsWith('file:')) {
-    const absolutePath = resolve(url);
-    url = `file://${absolutePath}`;
-}
+const absolutePath = resolve(url);
+url = `file://${absolutePath}`;
+
 
 export const dbClient = createClient({ url });
 
