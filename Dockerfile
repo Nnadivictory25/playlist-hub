@@ -31,9 +31,10 @@ COPY --from=prerelease /app/start.sh .
 
 # Ensure start.sh is executable
 USER root
+# create data directory and set ownership to bun user
+RUN mkdir -p /data && chown bun:bun /data 
 RUN chmod +x start.sh
 USER bun
 
-RUN mkdir -p /data/
 EXPOSE 3000/tcp
 ENTRYPOINT [ "./start.sh" ]
