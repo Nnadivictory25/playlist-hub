@@ -1,11 +1,12 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import type { Playlist } from '$lib/server/db/schema';
-	import { Music } from '@lucide/svelte';
+	import { Clock, Music, Play } from '@lucide/svelte';
 	import { useMutateLike } from '$lib/hooks/useMutateLike';
 	import { page } from '$app/state';
-	import { getQueryParams } from '$lib/app-utils';
+	import { formatTime, getQueryParams } from '$lib/app-utils';
 	import { useQueryClient } from '@tanstack/svelte-query';
+	import Button from './ui/button/button.svelte';
 	const queryClient = useQueryClient();
 
 	type PlaylistCardProps = {
@@ -48,20 +49,28 @@
 		</div>
 		<div class="p-3">
 			<p class="text-base font-medium">{playlist.name}</p>
-			<p class="text-sm text-gray-500">{playlist.description}</p>
+			<p class="text-sm text-gray-700">{playlist.description}</p>
 
-			<!-- Bottom Row -->
+			<!-- Middle Row -->
 			<div class="mt-5 flex justify-between p-0">
-				<div class="flex items-center gap-1 text-xs">
-					<Music size={16} class="text-primary" />
-					<p>{playlist.songCount} songs</p>
+				<div class="flex items-center gap-1 rounded-lg bg-primary/5 px-3 py-2 text-xs text-primary">
+					<Music size={16} />
+					<p class="font-medium">{playlist.songCount} songs</p>
 				</div>
 
+				<p class="flex items-center gap-1 text-xs text-gray-500">
+					<Clock size={15} />
+					{formatTime(new Date(playlist.createdAt))}
+				</p>
+			</div>
+
+			<!-- Bottom Row -->
+			<div class="mt-5 grid grid-cols-2 gap-2">
 				<div class="flex items-center gap-1 text-xs">
 					<button
 						aria-label="Like playlist"
-						title="Like playlist"
-						class="group cursor-pointer"
+						title={isLiked ? 'Unlike playlist' : 'Like playlist'}
+						class="group cursor-pointer rounded-sm bg-secondary px-2 py-1"
 						onclick={() => toggleLike()}
 					>
 						<svg
@@ -74,7 +83,7 @@
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="text-red-500 transition-all duration-150 hover:scale-110 hover:text-red-600 active:scale-95"
+							class="text-red-500 transition-all duration-150 hover:scale-110 hover:text-red-600 active:scale-75"
 						>
 							<path
 								d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
@@ -83,6 +92,16 @@
 					</button>
 					<p>{playlist.likes} likes</p>
 				</div>
+
+				<a
+					href={playlist.url}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-primary px-2 py-1 text-xs font-medium text-primary transition-all duration-150 hover:bg-primary hover:text-primary-foreground"
+				>
+					<Play class="size-3 group-hover:text-primary-foreground" />
+					View
+				</a>
 			</div>
 		</div>
 	</div>
