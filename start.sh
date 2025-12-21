@@ -9,7 +9,7 @@ echo "Starting deployment script..."
 echo "Running database migrations..."
 # Using the production flag if needed, and pointing to the migrate script
 # We use bun run to execute the migration script
-bun run src/lib/server/db/migrate.ts
+bun run db:migrate
 
 # 2. Start the application
 echo "Starting the application..."

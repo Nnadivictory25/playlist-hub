@@ -15,7 +15,7 @@
 		"db:push": "drizzle-kit push",
 		"db:gen": "drizzle-kit generate",
 		"db:gen-custom": "drizzle-kit generate --custom",
-		"db:migrate": "NODE_ENV=production && bun run src/lib/server/db/migrate.ts || drizzle-kit migrate",
+		"db:migrate": "drizzle-kit migrate",
 		"db:studio": "drizzle-kit studio",
 		"db:seed": "bun run src/lib/server/db/seed.ts"
 	},
