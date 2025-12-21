@@ -32,6 +32,7 @@ COPY --from=prerelease /app/start.sh .
 
 # Ensure start.sh is executable
 USER root
+RUN mkdir -p /data/playisthub.db
 RUN chmod +x start.sh
 USER bun
 
