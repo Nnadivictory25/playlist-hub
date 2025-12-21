@@ -27,14 +27,13 @@ COPY --from=prerelease /app/build build
 COPY --from=prerelease /app/package.json .
 COPY --from=prerelease /app/drizzle drizzle
 COPY --from=prerelease /app/drizzle.config.ts drizzle.config.ts
-# COPY --from=prerelease /app/src/lib/server/db/ src/lib/server/db/
 COPY --from=prerelease /app/start.sh .
 
 # Ensure start.sh is executable
 USER root
-RUN mkdir -p /data/playisthub.db
 RUN chmod +x start.sh
 USER bun
 
+RUN mkdir -p /data/playlisthub.db
 EXPOSE 3000/tcp
 ENTRYPOINT [ "./start.sh" ]
