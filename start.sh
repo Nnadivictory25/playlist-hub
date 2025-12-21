@@ -15,4 +15,4 @@ bun run db:migrate
 echo "Starting the application..."
 # Svelte-adapter-bun builds the app into the 'build' directory
 # The entry point is build/index.js
-exec bun --bun run preview
+exec bun --bun run build/index.js
