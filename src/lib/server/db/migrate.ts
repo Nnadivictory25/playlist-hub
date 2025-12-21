@@ -1,4 +1,4 @@
 import { migrate } from 'drizzle-orm/libsql/migrator';
-import { db } from '.';
+import { db } from '$lib/server/db';
 await migrate(db, { migrationsFolder: './drizzle' });
 console.log('Migrations applied ✅');
