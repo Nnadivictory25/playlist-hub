@@ -36,5 +36,5 @@ RUN mkdir -p /data && chown bun:bun /data
 RUN chmod +x start.sh
 USER bun
 
-EXPOSE 3000/tcp
+EXPOSE 3000
 ENTRYPOINT [ "./start.sh" ]
