@@ -34,6 +34,6 @@ USER root
 RUN chmod +x start.sh
 USER bun
 
-RUN mkdir -p /data/playlisthub.db
+RUN mkdir -p /data/
 EXPOSE 3000/tcp
 ENTRYPOINT [ "./start.sh" ]
