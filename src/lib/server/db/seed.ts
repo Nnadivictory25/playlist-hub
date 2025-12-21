@@ -4,7 +4,6 @@ const db = new Database(process.env.DATABASE_URL);
 // Only run seeding if this file is executed directly
 // @ts-ignore
 if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.meta.url).pathname) {
-
 	// Clean up existing data
 	db.run('DELETE FROM playlists');
 	db.run('DELETE FROM playlist_likes');
@@ -115,16 +114,19 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 
 	const playlistIds: number[] = [];
 	for (const playlist of playlists) {
-		const result = db.run(`INSERT INTO playlists (name, description, song_count, image_url, source, genre, url, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, unixepoch('subsecond') * 1000, unixepoch('subsecond') * 1000)`, [
-			playlist.name,
-			playlist.description,
-			playlist.song_count,
-			playlist.image_url,
-			playlist.source,
-			playlist.genre,
-			playlist.url,
-			playlist.user_id
-		]).lastInsertRowid;
+		const result = db.run(
+			`INSERT INTO playlists (name, description, song_count, image_url, source, genre, url, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, unixepoch('subsecond') * 1000, unixepoch('subsecond') * 1000)`,
+			[
+				playlist.name,
+				playlist.description,
+				playlist.song_count,
+				playlist.image_url,
+				playlist.source,
+				playlist.genre,
+				playlist.url,
+				playlist.user_id
+			]
+		).lastInsertRowid;
 		playlistIds.push(Number(result));
 	}
 
@@ -136,12 +138,11 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 	];
 
 	for (const like of likes) {
-		db.run(`INSERT INTO playlist_likes (playlist_id, user_id, created_at, updated_at) VALUES (?, ?, unixepoch('subsecond') * 1000, unixepoch('subsecond') * 1000)`, [
-			like.playlistId,
-			like.userId
-		]);
+		db.run(
+			`INSERT INTO playlist_likes (playlist_id, user_id, created_at, updated_at) VALUES (?, ?, unixepoch('subsecond') * 1000, unixepoch('subsecond') * 1000)`,
+			[like.playlistId, like.userId]
+		);
 	}
 
 	console.log('Seeded playlists ✅');
-
 }

@@ -6,7 +6,7 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		alias: {
-			"@/*": "./src/*",
+			'@/*': './src/*'
 		},
 		adapter: adapter()
 	}

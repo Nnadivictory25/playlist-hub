@@ -8,20 +8,20 @@ import { env } from '$env/dynamic/private';
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env;
 
 if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-    throw new Error('GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set');
+	throw new Error('GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set');
 }
 
 export const auth = betterAuth({
-    database: drizzleAdapter(db, {
-        provider: 'sqlite',
-        usePlural: true
-    }),
-    socialProviders: {
-        google: {
-            clientId: GOOGLE_CLIENT_ID,
-            clientSecret: GOOGLE_CLIENT_SECRET
-        }
-    },
+	database: drizzleAdapter(db, {
+		provider: 'sqlite',
+		usePlural: true
+	}),
+	socialProviders: {
+		google: {
+			clientId: GOOGLE_CLIENT_ID,
+			clientSecret: GOOGLE_CLIENT_SECRET
+		}
+	},
 
-    plugins: [sveltekitCookies(getRequestEvent)]
+	plugins: [sveltekitCookies(getRequestEvent)]
 });

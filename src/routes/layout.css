@@ -129,3 +129,22 @@
 		@apply flex items-center gap-2 bg-secondary px-6 py-2 transition-all duration-100 hover:opacity-90;
 	}
 }
+/* Like Animation Keyframes */
+@keyframes heart-pop {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.15);
+	}
+	70% {
+		transform: scale(0.95);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.animate-heart-pop {
+	animation: heart-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Toaster as Sonner, type ToasterProps as SonnerProps } from "svelte-sonner";
-	import { mode } from "mode-watcher";
+	import { Toaster as Sonner, type ToasterProps as SonnerProps } from 'svelte-sonner';
+	import { mode } from 'mode-watcher';
 
 	let { ...restProps }: SonnerProps = $props();
 </script>
@@ -13,9 +13,8 @@
 	toastOptions={{
 		classes: {
 			success: 'bg-green-700! text-white! border-green-600!',
-			error: 'bg-red-700! text-white! border-red-600!',
+			error: 'bg-red-700! text-white! border-red-600!'
 		}
 	}}
 	{...restProps}
 />
-

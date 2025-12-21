@@ -6,7 +6,6 @@
 	import { page } from '$app/state';
 	import { formatTime, getQueryParams } from '$lib/app-utils';
 	import { useQueryClient } from '@tanstack/svelte-query';
-	import Button from './ui/button/button.svelte';
 	const queryClient = useQueryClient();
 
 	type PlaylistCardProps = {
@@ -29,6 +28,14 @@
 		queryParams: getQueryParams(page.url),
 		queryClient
 	});
+
+	let isAnimating = $state(false);
+
+	const handleLike = () => {
+		isAnimating = true;
+		toggleLike();
+		setTimeout(() => (isAnimating = false), 600);
+	};
 </script>
 
 <Card.Root class="h-full overflow-hidden p-0 shadow-none!">
@@ -71,7 +78,7 @@
 						aria-label="Like playlist"
 						title={isLiked ? 'Unlike playlist' : 'Like playlist'}
 						class="group cursor-pointer rounded-sm bg-secondary px-2 py-1"
-						onclick={() => toggleLike()}
+						onclick={handleLike}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +90,7 @@
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="text-red-500 transition-all duration-150 hover:scale-110 hover:text-red-600 active:scale-75"
+							class={`text-red-500 transition-all duration-150 hover:scale-110 hover:text-red-600 active:scale-75 ${isAnimating ? 'animate-heart-pop' : ''}`}
 						>
 							<path
 								d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
