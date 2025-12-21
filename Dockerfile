@@ -18,7 +18,7 @@ FROM base AS prerelease
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 ENV NODE_ENV=production
-RUN bun run build
+RUN bun --bun run build
 
 # Final production image
 FROM base AS release
