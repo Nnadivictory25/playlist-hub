@@ -15,6 +15,13 @@
       "when": 1766270459620,
       "tag": "0001_likes_updater_trigger",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1766320459044,
+      "tag": "0002_smooth_living_lightning",
+      "breakpoints": true
     }
   ]
 }

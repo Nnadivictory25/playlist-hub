@@ -7,6 +7,7 @@ import {
 	uniqueIndex,
 	customType
 } from 'drizzle-orm/sqlite-core';
+import type { Genre } from '$lib/genres';
 
 const jsonArray = <TData>(name: string) =>
 	customType<{ data: TData[]; driverData: string }>({
@@ -31,23 +32,30 @@ const timestamps = {
 		.notNull()
 };
 
-export const playlists = sqliteTable('playlists', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
-	name: text('name').notNull(),
-	description: text('description'),
-	likes: integer('likes').notNull().default(0),
-	songCount: integer('song_count').notNull().default(0),
-	imageUrl: text('image_url').notNull(),
-	source: text('source', { enum: ['spotify', 'youtube', 'apple'] })
-		.notNull()
-		.default('spotify'),
-	genre: jsonArray('genre').$type<string[]>(),
-	url: text('url').notNull(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => users.id, { onDelete: 'cascade' }),
-	...timestamps
-});
+export const playlists = sqliteTable(
+	'playlists',
+	{
+		id: integer('id').primaryKey({ autoIncrement: true }),
+		name: text('name').notNull(),
+		description: text('description'),
+		likes: integer('likes').notNull().default(0),
+		songCount: integer('song_count').notNull().default(0),
+		imageUrl: text('image_url').notNull(),
+		source: text('source', { enum: ['spotify', 'youtube', 'apple'] })
+			.notNull()
+			.default('spotify'),
+		genre: jsonArray('genre').$type<Genre[]>(),
+		url: text('url').notNull(),
+		userId: text('user_id')
+			.notNull()
+			.references(() => users.id, { onDelete: 'cascade' }),
+		...timestamps
+	},
+	(table) => [
+		index('playlists_name_idx').on(table.name),
+		index('playlists_description_idx').on(table.description)
+	]
+);
 
 export type Playlist = typeof playlists.$inferSelect;
 export type NewPlaylist = typeof playlists.$inferInsert;

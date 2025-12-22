@@ -6,5 +6,5 @@ export const load = (async ({ locals, url }) => {
 	const user = locals.user;
 	const queryParams = getQueryParams(url);
 	const playlistsResult = await getPlaylists({ ...queryParams, userId: user?.id });
-	return { playlistsResult, user, queryParams };
+	return { playlistsResult, user };
 }) satisfies PageServerLoad;

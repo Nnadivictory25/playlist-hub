@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import logo from '$lib/assets/playlisthub-logo.png';
+	import { NuqsAdapter } from 'nuqs-svelte/adapters/svelte-kit';
 	import '@fontsource-variable/rubik';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import Navbar from '$lib/components/navbar.svelte';
@@ -26,7 +27,9 @@
 <Toaster />
 <main class="mx-auto max-w-6xl px-5 pt-16 pb-10">
 	<Navbar isSignedIn={data.isSignedIn} />
-	<QueryClientProvider client={queryClient}>
-		{@render children()}
-	</QueryClientProvider>
+	<NuqsAdapter>
+		<QueryClientProvider client={queryClient}>
+			{@render children()}
+		</QueryClientProvider>
+	</NuqsAdapter>
 </main>

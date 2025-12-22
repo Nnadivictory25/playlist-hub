@@ -1,21 +1,58 @@
 import { db } from '.';
 import { playlists, playlistLikes, type Playlist, type NewPlaylist } from './schema';
-import { eq, and, inArray, count } from 'drizzle-orm';
+import { eq, and, inArray, count, like, sql, or } from 'drizzle-orm';
+import type { Genre } from '$lib/genres';
+import { DEFAULT_LIMIT } from '$lib/app-utils';
 
 type GetPlaylistsParams = {
 	userId?: string;
+	search?: string;
+	genres?: Genre[];
 	limit?: number;
 	offset?: number;
 };
 
 export async function getPlaylists(params: GetPlaylistsParams) {
-	const { limit, offset, userId } = params;
+	const { limit, offset, userId, search, genres } = params;
+
+	// Build search conditions
+	let whereConditions = undefined;
+	const conditions = [];
+
+	// Add genre filter
+	if (genres && genres.length > 0) {
+		// Filter playlists that have at least one of the specified genres
+		// Using exact JSON array matching - more efficient than LIKE
+		const genreConditions = genres.map((genre) =>
+			sql.raw(
+				`EXISTS (SELECT 1 FROM json_each(genre) WHERE json_each.value = '${genre.replace(/'/g, "''")}')`
+			)
+		);
+		conditions.push(or(...genreConditions));
+	}
+
+	// Add search conditions
+	if (search) {
+		const searchTerm = `%${search}%`;
+		const searchConditions = or(
+			like(playlists.name, searchTerm),
+			like(playlists.description, searchTerm),
+			// Search within JSON array for genres
+			sql`${playlists.genre} LIKE ${searchTerm}`
+		);
+		conditions.push(searchConditions);
+	}
+
+	if (conditions.length > 0) {
+		whereConditions = and(...conditions);
+	}
 
 	const [playlistsData, userLikedLikes, [totalLikes]] = await Promise.all([
 		db
 			.select()
 			.from(playlists)
-			.limit(limit ?? 100)
+			.where(whereConditions)
+			.limit(limit ?? DEFAULT_LIMIT)
 			.offset(offset ?? 0),
 		userId
 			? db
