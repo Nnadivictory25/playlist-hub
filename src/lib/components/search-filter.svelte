@@ -185,12 +185,16 @@
 			{/each}
 			<Badge
 				variant="outline"
-				class="cursor-pointer px-3 text-sm font-normal hover:bg-primary/10"
+				class="cursor-pointer px-3 text-sm font-normal text-gray-600 hover:bg-primary/10"
 				onclick={clearAllFilters}
+				aria-label="Clear all filters"
+				title="Clear all filters"
+				aria-describedby="clear-all-filters-description"
 			>
-				<XIcon size={20} strokeWidth={2} />
+				<XIcon size={20} strokeWidth={2} aria-hidden="true" />
 				Clear
 			</Badge>
+			<span id="clear-all-filters-description" class="sr-only">Clear all filters</span>
 		</div>
 	{/if}
 </div>

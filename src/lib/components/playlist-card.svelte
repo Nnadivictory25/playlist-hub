@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import type { Playlist } from '$lib/server/db/schema';
-	import { Clock, Music, Play } from '@lucide/svelte';
+	import { ArrowUpRightIcon, Clock, Music, Play } from '@lucide/svelte';
 	import { useMutateLike } from '$lib/hooks/useMutateLike';
 	import { page } from '$app/state';
 	import { formatTime, getQueryParams } from '$lib/app-utils';
@@ -48,7 +48,7 @@
 	};
 </script>
 
-<Card.Root class="h-full overflow-hidden p-0 shadow-none!">
+<Card.Root class="h-full overflow-hidden p-0 shadow-none! fade-in-100">
 	<div class="relative flex h-full flex-col px-0">
 		<img
 			src={images[playlist.platform as keyof typeof images]}
@@ -122,7 +122,11 @@
 						class="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-primary px-2 py-1 text-xs font-medium text-primary transition-all duration-150 hover:bg-primary hover:text-primary-foreground"
 					>
 						View Playlist
-						<!-- <<ArrowUpRight /> class="size-3 group-hover:text-primary-foreground" /> -->
+						<ArrowUpRightIcon
+							size={14}
+							strokeWidth={2.5}
+							class="group-hover:text-primary-foreground"
+						/>
 					</a>
 				</div>
 			</div>
