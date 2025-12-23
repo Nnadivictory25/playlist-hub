@@ -22,7 +22,8 @@
 			limit: queryParams.limit.current,
 			offset: queryParams.offset.current,
 			search: queryParams.search.current,
-			genres: queryParams.genres.current
+			genres: queryParams.genres.current,
+			platforms: queryParams.platforms.current
 		})
 	});
 </script>

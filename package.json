@@ -60,6 +60,7 @@
 		"@libsql/client": "^0.15.15",
 		"@tanstack/svelte-query": "^6.0.10",
 		"better-auth": "^1.4.7",
-		"nuqs-svelte": "^1.2.2"
+		"nuqs-svelte": "^1.2.2",
+		"zod": "^4.2.1"
 	}
 }

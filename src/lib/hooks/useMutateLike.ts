@@ -1,10 +1,11 @@
 import { QueryClient, createMutation, useQueryClient } from '@tanstack/svelte-query';
 import { toast } from 'svelte-sonner';
+import type { PlaylistsQueryParams } from '$lib/app-utils';
 
 type UseMutateLikeProps = {
 	playlistId: number;
 	userId: string;
-	queryParams: Record<string, string>;
+	queryParams: PlaylistsQueryParams;
 	queryClient: QueryClient;
 };
 

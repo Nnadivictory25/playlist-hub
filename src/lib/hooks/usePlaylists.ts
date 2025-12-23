@@ -1,30 +1,26 @@
 import { createQuery } from '@tanstack/svelte-query';
 import type { User } from 'better-auth';
 import { objectToQueryParams } from '../app-utils';
-import type { Genre } from '../genres';
+import type { Genre, Platform } from '../filters';
 
 export type QueryParams = {
 	limit?: number;
 	offset?: number;
 	search?: string;
-	filter?: {
-		genres?: Genre[];
-		platforms?: string[];
-	}
+	genres?: Genre[];
+	platforms?: Platform[];
 };
 
 type UsePlaylistsParams = {
 	initialData: GetPlaylistsResult;
 	user?: User;
 	queryParams: QueryParams | (() => QueryParams);
-	selectedGenres?: Genre[];
 };
 
 export function usePlaylists({
 	initialData,
 	user,
-	queryParams,
-	selectedGenres
+	queryParams
 }: UsePlaylistsParams) {
 	// Helper to resolve params whether passed as object or function
 	const resolveParams = () => (typeof queryParams === 'function' ? queryParams() : queryParams);
@@ -40,13 +36,13 @@ export function usePlaylists({
 		const isInitial = JSON.stringify(params) === JSON.stringify(initialParams);
 
 		return {
-			queryKey: ['playlists', user?.id, params, selectedGenres],
+			queryKey: ['playlists', user?.id, params],
 			queryFn: async () => {
 				const fetchParams = {
 					...params,
 					userId: user?.id ?? ''
 				};
-				const res = await fetch(`/api/playlists?${objectToQueryParams(fetchParams)}`);
+				const res = await fetch(`/api/playlists?${encodeURI(objectToQueryParams(fetchParams))}`);
 				const json = await res.json();
 				if (!json.success) throw new Error(json.error);
 				return json.data as GetPlaylistsResult;

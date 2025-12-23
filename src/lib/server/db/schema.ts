@@ -1,13 +1,13 @@
+import { platforms, type Genre } from '../../filters';
 import { relations, sql } from 'drizzle-orm';
 import {
+	customType,
+	index,
+	integer,
 	sqliteTable,
 	text,
-	integer,
-	index,
-	uniqueIndex,
-	customType
+	uniqueIndex
 } from 'drizzle-orm/sqlite-core';
-import type { Genre } from '$lib/genres';
 
 const jsonArray = <TData>(name: string) =>
 	customType<{ data: TData[]; driverData: string }>({
@@ -41,9 +41,8 @@ export const playlists = sqliteTable(
 		likes: integer('likes').notNull().default(0),
 		songCount: integer('song_count').notNull().default(0),
 		imageUrl: text('image_url').notNull(),
-		source: text('source', { enum: ['spotify', 'youtube', 'apple'] })
-			.notNull()
-			.default('spotify'),
+		platform: text('platform', { enum: platforms as [string, ...string[]] })
+			.notNull(),
 		genre: jsonArray('genre').$type<Genre[]>(),
 		url: text('url').notNull(),
 		userId: text('user_id')

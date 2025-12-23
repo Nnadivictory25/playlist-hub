@@ -1,24 +1,50 @@
 import { parseAsInteger, parseAsString, createParser } from 'nuqs-svelte';
-import { genres, type Genre } from './genres';
+import { z } from 'zod';
+import { genres, type Genre, platforms, type Platform, isValidPlatform, isValidGenre, urlToPlatform, platformToUrl } from './filters';
 
-export function getQueryParams(url: URL) {
-    return Object.fromEntries(url.searchParams.entries());
+export function getQueryParams(url: URL): PlaylistsQueryParams {
+    const rawParams: Record<string, string | string[] | undefined> = {};
+
+    // Collect all query params
+    for (const [key, value] of url.searchParams.entries()) {
+        if (rawParams[key]) {
+            // Handle multiple values for the same key
+            const existing = rawParams[key];
+            rawParams[key] = Array.isArray(existing) ? [...existing, value] : [existing as string, value];
+        } else {
+            rawParams[key] = value;
+        }
+    }
+
+    // Parse and validate with Zod
+    const result = playlistsQuerySchema.safeParse(rawParams);
+
+    if (result.success) {
+        return result.data;
+    }
+
+    // If validation fails, return defaults
+    return playlistsQuerySchema.parse({});
 }
 
 export function objectToQueryParams(obj: Record<string, any>) {
     const params = new URLSearchParams();
 
     for (const [key, value] of Object.entries(obj)) {
-        if (value !== undefined && value !== null && value !== '') {
-            if (Array.isArray(value)) {
-                // For arrays, join with commas
-                const arrayValue = value.join(',');
-                if (arrayValue) {
-                    params.append(key, arrayValue);
-                }
-            } else {
-                params.append(key, value.toString());
+        if (value === undefined || value === null || value === '') continue;
+
+        // Handle arrays
+        if (Array.isArray(value)) {
+            // Convert Platform values to URL-safe values
+            const arrayValue = value
+                .map((v) => (key === 'platforms' && typeof v === 'string' && isValidPlatform(v) ? platformToUrl(v as Platform) : v))
+                .join(',');
+            if (arrayValue) {
+                params.append(key, arrayValue);
             }
+        } else {
+            // Handle numbers, strings, etc.
+            params.append(key, value.toString());
         }
     }
 
@@ -53,6 +79,47 @@ export function formatTime(date: Date): string {
 
 export const DEFAULT_LIMIT = 50;
 
+// Zod schema for query parameters - using exported arrays from filters.ts
+const genreEnum = z.enum(genres as [Genre, ...Genre[]]);
+const platformEnum = z.enum(platforms as [Platform, ...Platform[]]);
+
+export const playlistsQuerySchema = z.object({
+    search: z.string().optional(),
+    limit: z.coerce.number().int().positive().default(DEFAULT_LIMIT),
+    offset: z.coerce.number().int().nonnegative().default(0),
+    genres: z
+        .union([z.string(), z.array(genreEnum)])
+        .transform((val) => {
+            if (typeof val === 'string') {
+                return val
+                    .split(',')
+                    .map((g) => g.trim())
+                    .filter((g) => isValidGenre(g))
+                    .map((g) => g as Genre);
+            }
+            return val;
+        })
+        .optional()
+        .default([]),
+    platforms: z
+        .union([z.string(), z.array(platformEnum)])
+        .transform((val) => {
+            if (typeof val === 'string') {
+                return val
+                    .split(',')
+                    .map((p) => p.trim())
+                    .map((p) => urlToPlatform(p)) // Convert URL-safe to Platform
+                    .filter((p): p is Platform => p !== null);
+            }
+            return val;
+        })
+        .optional()
+        .default([]),
+    userId: z.string().optional()
+});
+
+export type PlaylistsQueryParams = z.infer<typeof playlistsQuerySchema>;
+
 /**
  * Creates a debounced version of a function that delays invoking the function
  * until after `delay` milliseconds have elapsed since the last time the
@@ -82,7 +149,7 @@ export const parseAsGenresArray = createParser({
         return genreStrings
             .flatMap((g) => g.split(',')) // Handle comma-separated strings
             .map((g) => g.trim())
-            .filter((g) => genres.includes(g as Genre))
+            .filter((g) => isValidGenre(g))
             .map((g) => g as Genre);
     },
 
@@ -93,14 +160,42 @@ export const parseAsGenresArray = createParser({
     .withDefault([]) // Empty array as default
     .withOptions({ history: 'push' });
 
+export const parseAsPlatformsArray = createParser({
+    parse(query: string | string[] | undefined): Platform[] {
+        if (!query) return [];
+
+        // Handle both single string and array inputs
+        const platformStrings = Array.isArray(query) ? query : [query];
+
+        // Convert URL-safe values to Platform values
+        return platformStrings
+            .flatMap((p) => p.split(',')) // Handle comma-separated strings
+            .map((p) => p.trim())
+            .map((p) => urlToPlatform(p)) // Convert URL-safe to Platform
+            .filter((p): p is Platform => p !== null);
+    },
+    serialize(value: Platform[]): string {
+        // Convert Platform values to URL-safe values for serialization
+        return value.map((p) => platformToUrl(p)).join(',');
+    }
+})
+    .withDefault([]) // Empty array as default
+    .withOptions({ history: 'push' });
+
+
+
 export const playlistsQueryParser = {
     search: parseAsString.withDefault(''),
     limit: parseAsInteger.withDefault(DEFAULT_LIMIT),
     offset: parseAsInteger.withDefault(0),
-    genres: parseAsGenresArray
+    genres: parseAsGenresArray,
+    platforms: parseAsPlatformsArray
 };
 
 
 export function capitalize(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
 }

@@ -18,6 +18,10 @@ declare global {
 		userLikedPlaylists: number[];
 		totalLikes: number;
 	};
+
+	type GetUserPlaylistsResult = {
+		playlists: Playlist[];
+	};
 }
 
-export {};
+export { };

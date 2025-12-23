@@ -4,24 +4,15 @@
 	import { AudioLines, ListFilter, Music4 } from '@lucide/svelte';
 	import { useQueryStates } from 'nuqs-svelte';
 	import { Input } from './ui/input';
-	import { genres } from '../genres';
-	import { cn } from '../utils';
+	import { genres, type Genre, type Platform } from '../filters';
+	import { cn } from '$lib/utils';
 	import Badge from './ui/badge/badge.svelte';
 	import CheckIcon from '@lucide/svelte/icons/check';
-	import { fade } from 'svelte/transition';
-
-	type FilterOption = {
-		label: string;
-		value: 'genres' | 'platforms';
-		icon: any;
-		options: { label: string; value: string }[];
-		selectedOptions: string[];
-	};
 
 	const { query }: { query: ReturnType<typeof useQueryStates<typeof playlistsQueryParser>> } =
 		$props();
 
-	let searchInput = $state('');
+	let searchInput = $state(query.search.current);
 
 	$effect(() => {
 		searchInput = query.search.current;
@@ -31,7 +22,7 @@
 		query.search.current = value;
 	}, 500);
 
-	const filterOptions = $state<FilterOption[]>([
+	const filterOptions = $state([
 		{
 			label: 'Genres',
 			value: 'genres',
@@ -39,8 +30,7 @@
 			options: genres.map((genre) => ({
 				label: genre,
 				value: genre
-			})),
-			selectedOptions: []
+			}))
 		},
 		{
 			label: 'Platforms',
@@ -53,22 +43,24 @@
 				},
 				{
 					label: 'YouTube Music',
-					value: 'youtube-music'
+					value: 'youtube music'
 				},
 				{
 					label: 'Apple Music',
-					value: 'apple-music'
+					value: 'apple music'
 				},
 				{
 					label: 'SoundCloud',
 					value: 'soundcloud'
 				}
-			],
-			selectedOptions: []
+			]
 		}
 	]);
 
 	let selectedFilters = $state<('genres' | 'platforms')[]>([]);
+
+	let selectedGenres = $derived(query.genres.current);
+	let selectedPlatforms = $derived(query.platforms.current);
 
 	function toggleFilter(filterType: 'genres' | 'platforms') {
 		if (selectedFilters.includes(filterType)) {
@@ -79,14 +71,25 @@
 	}
 
 	function toggleSelectedOptions(filterType: 'genres' | 'platforms', option: string) {
-		const filterOption = filterOptions.find((opt) => opt.value === filterType);
-		if (!filterOption) return;
-
-		if (filterOption.selectedOptions.includes(option)) {
-			filterOption.selectedOptions = filterOption.selectedOptions.filter((o) => o !== option);
+		if (filterType === 'genres') {
+			if (selectedGenres.includes(option as Genre)) {
+				query.genres.current = selectedGenres.filter((g) => g !== option);
+			} else {
+				query.genres.current = [...selectedGenres, option as Genre];
+			}
 		} else {
-			filterOption.selectedOptions = [...filterOption.selectedOptions, option];
+			if (selectedPlatforms.includes(option as Platform)) {
+				query.platforms.current = selectedPlatforms.filter((p) => p !== option);
+			} else {
+				query.platforms.current = [...selectedPlatforms, option as Platform];
+			}
 		}
+	}
+
+	function clearAllFilters() {
+		selectedFilters = [];
+		query.genres.current = [];
+		query.platforms.current = [];
 	}
 
 	const filterDropdownStates = $state<Record<'genres' | 'platforms', boolean>>({
@@ -146,7 +149,7 @@
 			{#each selectedFilters as filter}
 				{@const filterOption = filterOptions.find((option) => option.value === filter)}
 				{@const isGenres = filter === 'genres'}
-				{@const selectedOptions = filterOption?.selectedOptions ?? []}
+				{@const selectedOptions = isGenres ? selectedGenres : selectedPlatforms}
 				<DropdownMenu.Root bind:open={filterDropdownStates[filter]}>
 					<DropdownMenu.Trigger class="cursor-pointer">
 						<Badge
@@ -183,7 +186,7 @@
 								}}
 							>
 								{option.label}
-								{#if selectedOptions.includes(option.value)}
+								{#if isGenres ? selectedGenres.includes(option.value as Genre) : selectedPlatforms.includes(option.value as Platform)}
 									<CheckIcon size={17} strokeWidth={2} class="text-primary" />
 								{/if}
 							</DropdownMenu.Item>

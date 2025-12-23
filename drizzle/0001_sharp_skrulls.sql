@@ -1,5 +1,3 @@
--- Custom SQL migration file, put your code below! ---- Custom SQL migration file, put your code below! --
-
 CREATE TRIGGER update_playlist_likes_on_insert
 AFTER INSERT ON playlist_likes
 FOR EACH ROW

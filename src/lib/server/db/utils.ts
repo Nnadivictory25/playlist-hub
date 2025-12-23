@@ -1,11 +1,12 @@
-import { db } from '.';
-import { playlists, playlistLikes, type Playlist, type NewPlaylist } from './schema';
-import { eq, and, inArray, count, like, sql, or } from 'drizzle-orm';
-import type { Genre } from '$lib/genres';
 import { DEFAULT_LIMIT } from '$lib/app-utils';
+import type { Genre } from '$lib/filters';
+import { and, count, eq, like, or, sql } from 'drizzle-orm';
+import { db } from '.';
+import { playlistLikes, playlists, type NewPlaylist, type Playlist } from './schema';
 
 type GetPlaylistsParams = {
 	userId?: string;
+	platforms?: string[];
 	search?: string;
 	genres?: Genre[];
 	limit?: number;
@@ -13,7 +14,7 @@ type GetPlaylistsParams = {
 };
 
 export async function getPlaylists(params: GetPlaylistsParams) {
-	const { limit, offset, userId, search, genres } = params;
+	const { limit, offset, userId, search, genres, platforms } = params;
 
 	// Build search conditions
 	let whereConditions = undefined;
@@ -29,6 +30,12 @@ export async function getPlaylists(params: GetPlaylistsParams) {
 			)
 		);
 		conditions.push(or(...genreConditions));
+	}
+
+	// Add platform filter
+	if (platforms && platforms.length > 0) {
+		const platformConditions = platforms.map((platform) => sql`${playlists.platform} = ${platform}`);
+		conditions.push(or(...platformConditions));
 	}
 
 	// Add search conditions
@@ -56,9 +63,9 @@ export async function getPlaylists(params: GetPlaylistsParams) {
 			.offset(offset ?? 0),
 		userId
 			? db
-					.select({ playlistId: playlistLikes.playlistId })
-					.from(playlistLikes)
-					.where(eq(playlistLikes.userId, userId))
+				.select({ playlistId: playlistLikes.playlistId })
+				.from(playlistLikes)
+				.where(eq(playlistLikes.userId, userId))
 			: Promise.resolve([]),
 		db.select({ count: count() }).from(playlistLikes)
 	]);

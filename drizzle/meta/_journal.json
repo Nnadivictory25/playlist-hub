@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1766270430118,
-      "tag": "0000_sad_gladiator",
+      "when": 1766517096515,
+      "tag": "0000_light_mordo",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "6",
-      "when": 1766270459620,
-      "tag": "0001_likes_updater_trigger",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1766320459044,
-      "tag": "0002_smooth_living_lightning",
+      "when": 1766517102178,
+      "tag": "0001_sharp_skrulls",
       "breakpoints": true
     }
   ]

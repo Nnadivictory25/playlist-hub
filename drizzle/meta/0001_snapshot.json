@@ -1,6 +1,6 @@
 {
-  "id": "daf30b66-bf62-4f64-b696-271d829fac13",
-  "prevId": "1203ee87-4341-40fa-bf0b-a2c23c587822",
+  "id": "a8d3629f-3103-4ef9-aab5-d720e013553d",
+  "prevId": "c7992a6d-b7af-4d44-8b71-3b89e15f6813",
   "version": "6",
   "dialect": "sqlite",
   "tables": {
@@ -266,13 +266,12 @@
           "notNull": true,
           "autoincrement": false
         },
-        "source": {
-          "name": "source",
+        "platform": {
+          "name": "platform",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'spotify'"
+          "autoincrement": false
         },
         "genre": {
           "name": "genre",
@@ -312,7 +311,22 @@
           "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "playlists_name_idx": {
+          "name": "playlists_name_idx",
+          "columns": [
+            "name"
+          ],
+          "isUnique": false
+        },
+        "playlists_description_idx": {
+          "name": "playlists_description_idx",
+          "columns": [
+            "description"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "playlists_user_id_users_id_fk": {
           "name": "playlists_user_id_users_id_fk",

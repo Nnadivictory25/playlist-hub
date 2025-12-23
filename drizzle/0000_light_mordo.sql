@@ -35,7 +35,7 @@ CREATE TABLE `playlists` (
 	`likes` integer DEFAULT 0 NOT NULL,
 	`song_count` integer DEFAULT 0 NOT NULL,
 	`image_url` text NOT NULL,
-	`source` text DEFAULT 'spotify' NOT NULL,
+	`platform` text NOT NULL,
 	`genre` text,
 	`url` text NOT NULL,
 	`user_id` text NOT NULL,
@@ -44,6 +44,8 @@ CREATE TABLE `playlists` (
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE INDEX `playlists_name_idx` ON `playlists` (`name`);--> statement-breakpoint
+CREATE INDEX `playlists_description_idx` ON `playlists` (`description`);--> statement-breakpoint
 CREATE TABLE `sessions` (
 	`id` text PRIMARY KEY NOT NULL,
 	`expires_at` integer NOT NULL,
