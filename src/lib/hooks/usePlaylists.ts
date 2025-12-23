@@ -7,7 +7,10 @@ export type QueryParams = {
 	limit?: number;
 	offset?: number;
 	search?: string;
-	genres?: Genre[];
+	filter?: {
+		genres?: Genre[];
+		platforms?: string[];
+	}
 };
 
 type UsePlaylistsParams = {

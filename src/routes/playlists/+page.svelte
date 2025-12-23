@@ -5,6 +5,7 @@
 	import { usePlaylists } from '@/lib/hooks/usePlaylists';
 	import { useQueryStates } from 'nuqs-svelte';
 	import type { PageProps } from './$types';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
 
 	let { data }: PageProps = $props();
 
@@ -32,19 +33,21 @@
 
 	<SearchFilter query={queryParams} />
 
-	{#if playlistsQuery.isLoading}
-		<p>Getting Playlists...</p>
-	{:else if playlistsQuery.error}
-		<p>Something went wrong: {playlistsQuery.error.message}</p>
-	{:else if playlistsQuery.data?.playlists.length && playlistsQuery.data.playlists.length > 0}
-		{@const { userLikedPlaylists, playlists } = playlistsQuery.data}
-		<div class="mt-10 grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+	<div class="mt-10 grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+		{#if playlistsQuery.isLoading}
+			{#each Array.from({ length: 5 }) as _, index (index)}
+				<Skeleton class="h-[360px] w-full bg-slate-300" />
+			{/each}
+		{:else if playlistsQuery.error}
+			<p>Something went wrong: {playlistsQuery.error.message}</p>
+		{:else if playlistsQuery.data?.playlists.length && playlistsQuery.data.playlists.length > 0}
+			{@const { userLikedPlaylists, playlists } = playlistsQuery.data}
 			{#each playlists as playlist, index (index)}
 				{@const isLiked = userLikedPlaylists.includes(playlist.id)}
 				<PlaylistCard {playlist} userId={user?.id ?? ''} {isLiked} />
 			{/each}
-		</div>
-	{:else}
-		<p>No playlists found</p>
-	{/if}
+		{:else}
+			<p>No playlists found {queryParams.search.current ? 'for your search' : ''}</p>
+		{/if}
+	</div>
 </section>
