@@ -121,8 +121,8 @@
 						rel="noopener noreferrer"
 						class="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-sm border border-primary px-2 py-1 text-xs font-medium text-primary transition-all duration-150 hover:bg-primary hover:text-primary-foreground"
 					>
-						<Play class="size-3 group-hover:text-primary-foreground" />
 						View Playlist
+						<!-- <<ArrowUpRight /> class="size-3 group-hover:text-primary-foreground" /> -->
 					</a>
 				</div>
 			</div>
