@@ -41,8 +41,7 @@ export const playlists = sqliteTable(
 		likes: integer('likes').notNull().default(0),
 		songCount: integer('song_count').notNull().default(0),
 		imageUrl: text('image_url').notNull(),
-		platform: text('platform', { enum: platforms as [string, ...string[]] })
-			.notNull(),
+		platform: text('platform', { enum: platforms as [string, ...string[]] }).notNull(),
 		genre: jsonArray('genre').$type<Genre[]>(),
 		url: text('url').notNull(),
 		userId: text('user_id')

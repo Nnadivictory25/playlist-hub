@@ -34,7 +34,9 @@ export async function getPlaylists(params: GetPlaylistsParams) {
 
 	// Add platform filter
 	if (platforms && platforms.length > 0) {
-		const platformConditions = platforms.map((platform) => sql`${playlists.platform} = ${platform}`);
+		const platformConditions = platforms.map(
+			(platform) => sql`${playlists.platform} = ${platform}`
+		);
 		conditions.push(or(...platformConditions));
 	}
 
@@ -63,9 +65,9 @@ export async function getPlaylists(params: GetPlaylistsParams) {
 			.offset(offset ?? 0),
 		userId
 			? db
-				.select({ playlistId: playlistLikes.playlistId })
-				.from(playlistLikes)
-				.where(eq(playlistLikes.userId, userId))
+					.select({ playlistId: playlistLikes.playlistId })
+					.from(playlistLikes)
+					.where(eq(playlistLikes.userId, userId))
 			: Promise.resolve([]),
 		db.select({ count: count() }).from(playlistLikes)
 	]);

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { capitalize, debounce, playlistsQueryParser } from '$lib/app-utils';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { AudioLines, ListFilter, Music4 } from '@lucide/svelte';
+	import { AudioLines, ListFilter, Music4, XIcon } from '@lucide/svelte';
 	import { useQueryStates } from 'nuqs-svelte';
 	import { Input } from './ui/input';
-	import { genres, type Genre, type Platform } from '../filters';
+	import { genres, platforms, type Genre, type Platform } from '$lib/filters';
 	import { cn } from '$lib/utils';
 	import Badge from './ui/badge/badge.svelte';
 	import CheckIcon from '@lucide/svelte/icons/check';
@@ -12,11 +12,7 @@
 	const { query }: { query: ReturnType<typeof useQueryStates<typeof playlistsQueryParser>> } =
 		$props();
 
-	let searchInput = $state(query.search.current);
-
-	$effect(() => {
-		searchInput = query.search.current;
-	});
+	let searchInput = $derived(query.search.current);
 
 	const debouncedSearchUpdate = debounce((value: string) => {
 		query.search.current = value;
@@ -27,42 +23,40 @@
 			label: 'Genres',
 			value: 'genres',
 			icon: Music4,
-			options: genres.map((genre) => ({
-				label: genre,
-				value: genre
-			}))
+			options: genres
 		},
 		{
 			label: 'Platforms',
 			value: 'platforms',
 			icon: AudioLines,
-			options: [
-				{
-					label: 'Spotify',
-					value: 'spotify'
-				},
-				{
-					label: 'YouTube Music',
-					value: 'youtube music'
-				},
-				{
-					label: 'Apple Music',
-					value: 'apple music'
-				},
-				{
-					label: 'SoundCloud',
-					value: 'soundcloud'
-				}
-			]
+			options: platforms
 		}
 	]);
 
-	let selectedFilters = $state<('genres' | 'platforms')[]>([]);
+	let selectedFilters = $derived(getSelectedFilters());
+
+	function getSelectedFilters() {
+		const filters: ('genres' | 'platforms')[] = [];
+		if (query.genres.current.length > 0) {
+			filters.push('genres');
+		}
+		if (query.platforms.current.length > 0) {
+			filters.push('platforms');
+		}
+		return filters;
+	}
 
 	let selectedGenres = $derived(query.genres.current);
 	let selectedPlatforms = $derived(query.platforms.current);
 
+	const filterDropdownStates = $state<Record<'genres' | 'platforms', boolean>>({
+		genres: false,
+		platforms: false
+	});
+
 	function toggleFilter(filterType: 'genres' | 'platforms') {
+		filterDropdownStates[filterType] = true;
+
 		if (selectedFilters.includes(filterType)) {
 			selectedFilters = selectedFilters.filter((f) => f !== filterType);
 		} else {
@@ -91,14 +85,9 @@
 		query.genres.current = [];
 		query.platforms.current = [];
 	}
-
-	const filterDropdownStates = $state<Record<'genres' | 'platforms', boolean>>({
-		genres: true,
-		platforms: true
-	});
 </script>
 
-<div class="mt-5 space-y-4">
+<div class="relative mt-5 space-y-4">
 	<div class="flex items-center gap-2">
 		<!-- Filters Dropdown -->
 		<DropdownMenu.Root>
@@ -117,7 +106,7 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content>
 				<DropdownMenu.Group>
-					{#each filterOptions as option}
+					{#each filterOptions as option (option.value)}
 						<DropdownMenu.Item
 							class="cursor-pointer text-sm"
 							onclick={() => toggleFilter(option.value as 'genres' | 'platforms')}
@@ -145,8 +134,8 @@
 
 	<!-- Selected Filters Pill + Dropdown -->
 	{#if selectedFilters.length > 0}
-		<div class="flex items-center gap-2">
-			{#each selectedFilters as filter}
+		<div class="absolute flex items-center gap-2">
+			{#each selectedFilters as filter (filter)}
 				{@const filterOption = filterOptions.find((option) => option.value === filter)}
 				{@const isGenres = filter === 'genres'}
 				{@const selectedOptions = isGenres ? selectedGenres : selectedPlatforms}
@@ -155,15 +144,15 @@
 						<Badge
 							variant="outline"
 							class={cn(
-								'text-sm',
+								'px-3 text-sm',
 								selectedOptions.length > 0 ? 'border border-primary bg-primary/10 text-primary' : ''
 							)}
 						>
-							{capitalize(filter)}
+							{capitalize(filter)} ({selectedOptions.length})
 						</Badge>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content
-						class="custom-scrollbar relative ml-1 max-h-50 w-50 overflow-y-auto lg:ml-25"
+						class="custom-scrollbar relative ml-1 max-h-50 w-55 overflow-y-auto lg:ml-25"
 						data-filter={filter}
 					>
 						<DropdownMenu.Label class="text-xs! font-medium!"
@@ -176,17 +165,17 @@
 						<DropdownMenu.Separator />
 
 						<!-- Options for the selected filter -->
-						{#each filterOption?.options as option}
+						{#each filterOption?.options as option (option)}
 							<DropdownMenu.Item
 								class="cursor-pointer justify-between"
 								onclick={(e) => {
 									// prevent the dropdown from closing
 									e.preventDefault();
-									toggleSelectedOptions(filter, option.value);
+									toggleSelectedOptions(filter, option);
 								}}
 							>
-								{option.label}
-								{#if isGenres ? selectedGenres.includes(option.value as Genre) : selectedPlatforms.includes(option.value as Platform)}
+								{capitalize(option)}
+								{#if isGenres ? selectedGenres.includes(option as Genre) : selectedPlatforms.includes(option as Platform)}
 									<CheckIcon size={17} strokeWidth={2} class="text-primary" />
 								{/if}
 							</DropdownMenu.Item>
@@ -194,6 +183,14 @@
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 			{/each}
+			<Badge
+				variant="outline"
+				class="cursor-pointer px-3 text-sm font-normal hover:bg-primary/10"
+				onclick={clearAllFilters}
+			>
+				<XIcon size={20} strokeWidth={2} />
+				Clear
+			</Badge>
 		</div>
 	{/if}
 </div>

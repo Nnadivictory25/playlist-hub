@@ -1,6 +1,15 @@
 import { parseAsInteger, parseAsString, createParser } from 'nuqs-svelte';
 import { z } from 'zod';
-import { genres, type Genre, platforms, type Platform, isValidPlatform, isValidGenre, urlToPlatform, platformToUrl } from './filters';
+import {
+    genres,
+    type Genre,
+    platforms,
+    type Platform,
+    isValidPlatform,
+    isValidGenre,
+    urlToPlatform,
+    platformToUrl
+} from './filters';
 
 export function getQueryParams(url: URL): PlaylistsQueryParams {
     const rawParams: Record<string, string | string[] | undefined> = {};
@@ -37,7 +46,11 @@ export function objectToQueryParams(obj: Record<string, any>) {
         if (Array.isArray(value)) {
             // Convert Platform values to URL-safe values
             const arrayValue = value
-                .map((v) => (key === 'platforms' && typeof v === 'string' && isValidPlatform(v) ? platformToUrl(v as Platform) : v))
+                .map((v) =>
+                    key === 'platforms' && typeof v === 'string' && isValidPlatform(v)
+                        ? platformToUrl(v as Platform)
+                        : v
+                )
                 .join(',');
             if (arrayValue) {
                 params.append(key, arrayValue);
@@ -157,8 +170,8 @@ export const parseAsGenresArray = createParser({
         return value.join(',');
     }
 })
-    .withDefault([]) // Empty array as default
-    .withOptions({ history: 'push' });
+    .withDefault([])
+    .withOptions({ history: 'push', clearOnDefault: true });
 
 export const parseAsPlatformsArray = createParser({
     parse(query: string | string[] | undefined): Platform[] {
@@ -174,15 +187,14 @@ export const parseAsPlatformsArray = createParser({
             .map((p) => urlToPlatform(p)) // Convert URL-safe to Platform
             .filter((p): p is Platform => p !== null);
     },
+
     serialize(value: Platform[]): string {
         // Convert Platform values to URL-safe values for serialization
         return value.map((p) => platformToUrl(p)).join(',');
     }
 })
-    .withDefault([]) // Empty array as default
-    .withOptions({ history: 'push' });
-
-
+    .withDefault([])
+    .withOptions({ history: 'push', clearOnDefault: true });
 
 export const playlistsQueryParser = {
     search: parseAsString.withDefault(''),
@@ -192,10 +204,9 @@ export const playlistsQueryParser = {
     platforms: parseAsPlatformsArray
 };
 
-
 export function capitalize(str: string) {
     return str
         .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(' ');
 }

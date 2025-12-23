@@ -12,7 +12,8 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 	const playlists = [
 		{
 			name: 'Afrobeat Vibes',
-			description: 'Groovy rhythms from West Africa. A curated collection of Afrobeat classics and contemporary hits.',
+			description:
+				'Groovy rhythms from West Africa. A curated collection of Afrobeat classics and contemporary hits.',
 			song_count: 25,
 			image_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
 			platform: 'spotify',
@@ -22,7 +23,8 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 		},
 		{
 			name: 'Rock Classics',
-			description: 'Timeless rock hits from the golden age. Perfect for road trips and rocking out.',
+			description:
+				'Timeless rock hits from the golden age. Perfect for road trips and rocking out.',
 			song_count: 30,
 			image_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
 			platform: 'youtube music',
@@ -32,7 +34,8 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 		},
 		{
 			name: 'Jazz Lounge',
-			description: 'Smooth jazz for relaxing. Perfect ambiance for intimate dinners and late-night reading.',
+			description:
+				'Smooth jazz for relaxing. Perfect ambiance for intimate dinners and late-night reading.',
 			song_count: 20,
 			image_url: 'https://images.unsplash.com/photo-1515552726023-7125c8d07fb3?w=400',
 			platform: 'apple music',
@@ -42,7 +45,8 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 		},
 		{
 			name: 'Pop Hits 2023',
-			description: 'Top pop songs of the year. Chart-topping hits and viral sensations from the biggest artists.',
+			description:
+				'Top pop songs of the year. Chart-topping hits and viral sensations from the biggest artists.',
 			song_count: 40,
 			image_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
 			platform: 'spotify',
@@ -62,7 +66,8 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 		},
 		{
 			name: 'Country Roads',
-			description: 'Feel-good country tunes. Classic storytelling ballads and modern country-pop crossovers.',
+			description:
+				'Feel-good country tunes. Classic storytelling ballads and modern country-pop crossovers.',
 			song_count: 28,
 			image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
 			platform: 'apple music',
@@ -82,7 +87,8 @@ if (process.argv[1] === import.meta.path || process.argv[1] === new URL(import.m
 		},
 		{
 			name: 'Blues Legends',
-			description: 'Classic blues guitar. From Delta blues origins to Chicago electric blues masters.',
+			description:
+				'Classic blues guitar. From Delta blues origins to Chicago electric blues masters.',
 			song_count: 18,
 			image_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400',
 			platform: 'youtube music',

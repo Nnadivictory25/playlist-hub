@@ -12,7 +12,8 @@
 	const { playlistsResult, user } = data;
 
 	let queryParams = useQueryStates(playlistsQueryParser, {
-		shallow: false
+		shallow: false,
+		clearOnDefault: true
 	});
 
 	const playlistsQuery = usePlaylists({
@@ -34,7 +35,7 @@
 
 	<SearchFilter query={queryParams} />
 
-	<div class="mt-10 grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+	<div class="mt-15 grid gap-4 md:grid-cols-3 lg:grid-cols-4">
 		{#if playlistsQuery.isLoading}
 			{#each Array.from({ length: 5 }) as _, index (index)}
 				<Skeleton class="h-[360px] w-full bg-slate-300" />

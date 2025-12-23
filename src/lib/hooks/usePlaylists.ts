@@ -17,11 +17,7 @@ type UsePlaylistsParams = {
 	queryParams: QueryParams | (() => QueryParams);
 };
 
-export function usePlaylists({
-	initialData,
-	user,
-	queryParams
-}: UsePlaylistsParams) {
+export function usePlaylists({ initialData, user, queryParams }: UsePlaylistsParams) {
 	// Helper to resolve params whether passed as object or function
 	const resolveParams = () => (typeof queryParams === 'function' ? queryParams() : queryParams);
 
