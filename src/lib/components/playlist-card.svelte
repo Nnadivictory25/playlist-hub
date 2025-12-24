@@ -4,7 +4,8 @@
 	import { ArrowUpRightIcon, Clock, Music, Play } from '@lucide/svelte';
 	import { useMutateLike } from '$lib/hooks/useMutateLike';
 	import { page } from '$app/state';
-	import { formatTime, getQueryParams } from '$lib/app-utils';
+	import { formatTime, getQueryParams, platformImages } from '$lib/app-utils';
+	import type { Platform } from '$lib/filters';
 	import { useQueryClient } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	const queryClient = useQueryClient();
@@ -16,12 +17,6 @@
 	};
 
 	let { playlist, userId, isLiked }: PlaylistCardProps = $props();
-
-	let images = {
-		spotify: '/icons8-spotify-48.png',
-		'youtube music': '/icons8-youtube-music-48.png',
-		'apple music': '/icons8-apple-music-48.png'
-	};
 
 	const { mutate: toggleLike } = useMutateLike({
 		playlistId: playlist.id,
@@ -51,7 +46,7 @@
 <Card.Root class="h-full overflow-hidden p-0 shadow-none! fade-in-100">
 	<div class="relative flex h-full flex-col px-0">
 		<img
-			src={images[playlist.platform as keyof typeof images]}
+			src={platformImages[playlist.platform as Platform]}
 			alt={playlist.platform}
 			class="absolute top-2 right-2 size-8 rounded-full bg-white p-1 shadow-md"
 			loading="lazy"

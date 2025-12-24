@@ -11,6 +11,13 @@ import {
     platformToUrl
 } from './filters';
 
+export const platformImages: Record<Platform, string> = {
+    spotify: '/icons8-spotify-48.png',
+    'youtube music': '/icons8-youtube-music-48.png',
+    'apple music': '/icons8-apple-music-48.png',
+    soundcloud: '/soundcloud.png'
+};
+
 export function getQueryParams(url: URL): PlaylistsQueryParams {
     const rawParams: Record<string, string | string[] | undefined> = {};
 

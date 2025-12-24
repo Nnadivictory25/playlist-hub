@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { capitalize, debounce, playlistsQueryParser } from '$lib/app-utils';
+	import { capitalize, debounce, playlistsQueryParser, platformImages } from '$lib/app-utils';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import {
 		ArrowUpDownIcon,
@@ -15,6 +15,7 @@
 	import { genres, platforms, type Genre, type Platform } from '$lib/filters';
 	import { cn } from '$lib/utils';
 	import Badge from './ui/badge/badge.svelte';
+	import CreatePlaylist from './create-playlist.svelte';
 	import CheckIcon from '@lucide/svelte/icons/check';
 
 	const { query }: { query: ReturnType<typeof useQueryStates<typeof playlistsQueryParser>> } =
@@ -167,6 +168,7 @@
 					{capitalize(sortOption)}
 				</Badge>
 			{/each}
+			<CreatePlaylist />
 		</div>
 	</div>
 
@@ -209,7 +211,16 @@
 									toggleSelectedOptions(filter, option);
 								}}
 							>
-								{capitalize(option)}
+								<div class="flex items-center gap-2">
+									{#if !isGenres}
+										<img
+											src={platformImages[option as Platform]}
+											alt={option}
+											class="size-5 rounded"
+										/>
+									{/if}
+									{capitalize(option)}
+								</div>
 								{#if isGenres ? selectedGenres.includes(option as Genre) : selectedPlatforms.includes(option as Platform)}
 									<CheckIcon size={17} strokeWidth={2} class="text-primary" />
 								{/if}
