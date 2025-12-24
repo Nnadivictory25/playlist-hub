@@ -1,7 +1,15 @@
 <script lang="ts">
 	import { capitalize, debounce, playlistsQueryParser } from '$lib/app-utils';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { AudioLines, ListFilter, Music4, XIcon } from '@lucide/svelte';
+	import {
+		ArrowUpDownIcon,
+		AudioLines,
+		Clock,
+		Flame,
+		ListFilter,
+		Music4,
+		XIcon
+	} from '@lucide/svelte';
 	import { useQueryStates } from 'nuqs-svelte';
 	import { Input } from './ui/input';
 	import { genres, platforms, type Genre, type Platform } from '$lib/filters';
@@ -48,6 +56,7 @@
 
 	let selectedGenres = $derived(query.genres.current);
 	let selectedPlatforms = $derived(query.platforms.current);
+	let selectedSortBy = $derived(query.sortBy.current as 'latest' | 'popular');
 
 	const filterDropdownStates = $state<Record<'genres' | 'platforms', boolean>>({
 		genres: false,
@@ -80,56 +89,85 @@
 		}
 	}
 
+	function toggleSortBy(sortOption: 'latest' | 'popular') {
+		query.sortBy.current = sortOption;
+	}
+
 	function clearAllFilters() {
 		selectedFilters = [];
 		query.genres.current = [];
 		query.platforms.current = [];
+		query.sortBy.current = 'popular';
 	}
+
+	let sortOptions = ['popular', 'latest'];
 </script>
 
 <div class="relative mt-5 space-y-4">
-	<div class="flex items-center gap-2">
-		<!-- Filters Dropdown -->
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger
-				aria-label="Filter Playlists"
-				title="Filter Playlists"
-				aria-haspopup="menu"
-				class={cn(
-					'flex size-9 cursor-pointer items-center justify-center rounded-lg',
-					selectedFilters.length
-						? 'bg-primary/10 text-primary transition-colors duration-150 hover:bg-primary/20'
-						: ''
-				)}
-			>
-				<ListFilter size={17} strokeWidth={3} class="font-bold" />
-			</DropdownMenu.Trigger>
-			<DropdownMenu.Content>
-				<DropdownMenu.Group>
-					{#each filterOptions as option (option.value)}
-						<DropdownMenu.Item
-							class="cursor-pointer text-sm"
-							onclick={() => toggleFilter(option.value as 'genres' | 'platforms')}
-						>
-							<option.icon size={17} strokeWidth={2} />
-							{option.label}
-							{#if selectedFilters.includes(option.value as 'genres' | 'platforms')}
-								<CheckIcon size={17} strokeWidth={2} class="text-primary" />
-							{/if}
-						</DropdownMenu.Item>
-					{/each}
-				</DropdownMenu.Group>
-			</DropdownMenu.Content>
-		</DropdownMenu.Root>
+	<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-0">
+		<div class="flex flex-1 items-center gap-2">
+			<!-- Filters Dropdown -->
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger
+					aria-label="Filter Playlists"
+					title="Filter Playlists"
+					aria-haspopup="menu"
+					class={cn(
+						'flex size-9 cursor-pointer items-center justify-center rounded-lg',
+						selectedFilters.length
+							? 'bg-primary/10 text-primary transition-colors duration-150 hover:bg-primary/20'
+							: ''
+					)}
+				>
+					<ListFilter size={17} strokeWidth={3} class="font-bold" />
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content>
+					<DropdownMenu.Group>
+						{#each filterOptions as option (option.value)}
+							<DropdownMenu.Item
+								class="cursor-pointer text-sm"
+								onclick={() => toggleFilter(option.value as 'genres' | 'platforms')}
+							>
+								<option.icon size={17} strokeWidth={2} />
+								{option.label}
+								{#if selectedFilters.includes(option.value as 'genres' | 'platforms')}
+									<CheckIcon size={17} strokeWidth={2} class="text-primary" />
+								{/if}
+							</DropdownMenu.Item>
+						{/each}
+					</DropdownMenu.Group>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
 
-		<!-- Search Input -->
-		<Input
-			type="search"
-			placeholder="Search Playlists..."
-			bind:value={searchInput}
-			oninput={(e) => debouncedSearchUpdate(e.currentTarget.value)}
-			class="shadow-none focus-visible:border focus-visible:border-primary focus-visible:ring-0"
-		/>
+			<!-- Search Input -->
+			<Input
+				type="search"
+				placeholder="Search Playlists..."
+				bind:value={searchInput}
+				oninput={(e) => debouncedSearchUpdate(e.currentTarget.value)}
+				class="max-w-xl shadow-none focus-visible:border focus-visible:border-primary focus-visible:ring-0"
+			/>
+		</div>
+
+		<div class="flex items-center gap-2">
+			{#each sortOptions as sortOption, i (sortOption)}
+				<Badge
+					variant="outline"
+					class={cn(
+						'cursor-pointer px-3 text-sm font-normal hover:bg-primary/10',
+						selectedSortBy === sortOption ? 'active-badge' : ''
+					)}
+					onclick={() => toggleSortBy(sortOption as 'latest' | 'popular')}
+				>
+					{#if i === 0}
+						<Flame size={25} strokeWidth={2.5} class="text-primary" />
+					{:else}
+						<Clock size={25} strokeWidth={2.5} class="text-primary" />
+					{/if}
+					{capitalize(sortOption)}
+				</Badge>
+			{/each}
+		</div>
 	</div>
 
 	<!-- Selected Filters Pill + Dropdown -->
@@ -143,10 +181,7 @@
 					<DropdownMenu.Trigger class="cursor-pointer">
 						<Badge
 							variant="outline"
-							class={cn(
-								'px-3 text-sm',
-								selectedOptions.length > 0 ? 'border border-primary bg-primary/10 text-primary' : ''
-							)}
+							class={cn('px-3 text-sm', selectedOptions.length > 0 ? 'active-badge' : '')}
 						>
 							{capitalize(filter)} ({selectedOptions.length})
 						</Badge>

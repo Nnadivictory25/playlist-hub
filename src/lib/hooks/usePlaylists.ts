@@ -7,6 +7,7 @@ export type QueryParams = {
 	limit?: number;
 	offset?: number;
 	search?: string;
+	sortBy?: 'latest' | 'popular';
 	genres?: Genre[];
 	platforms?: Platform[];
 };

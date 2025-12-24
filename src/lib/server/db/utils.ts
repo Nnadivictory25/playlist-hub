@@ -1,6 +1,6 @@
 import { DEFAULT_LIMIT } from '$lib/app-utils';
 import type { Genre } from '$lib/filters';
-import { and, count, eq, like, or, sql } from 'drizzle-orm';
+import { and, count, desc, eq, like, or, sql } from 'drizzle-orm';
 import { db } from '.';
 import { playlistLikes, playlists, type NewPlaylist, type Playlist } from './schema';
 
@@ -11,10 +11,11 @@ type GetPlaylistsParams = {
 	genres?: Genre[];
 	limit?: number;
 	offset?: number;
+	sortBy?: 'latest' | 'popular';
 };
 
 export async function getPlaylists(params: GetPlaylistsParams) {
-	const { limit, offset, userId, search, genres, platforms } = params;
+	const { limit, offset, userId, search, genres, platforms, sortBy } = params;
 
 	// Build search conditions
 	let whereConditions = undefined;
@@ -56,18 +57,28 @@ export async function getPlaylists(params: GetPlaylistsParams) {
 		whereConditions = and(...conditions);
 	}
 
+	// Build order by clause based on sortBy parameter
+	let orderBy;
+	if (sortBy === 'popular') {
+		orderBy = [desc(playlists.likes), desc(playlists.createdAt)];
+	} else {
+		// Default to 'latest' (when sortBy is 'latest')
+		orderBy = [desc(playlists.createdAt)];
+	}
+
 	const [playlistsData, userLikedLikes, [totalLikes]] = await Promise.all([
 		db
 			.select()
 			.from(playlists)
 			.where(whereConditions)
+			.orderBy(...orderBy)
 			.limit(limit ?? DEFAULT_LIMIT)
 			.offset(offset ?? 0),
 		userId
 			? db
-					.select({ playlistId: playlistLikes.playlistId })
-					.from(playlistLikes)
-					.where(eq(playlistLikes.userId, userId))
+				.select({ playlistId: playlistLikes.playlistId })
+				.from(playlistLikes)
+				.where(eq(playlistLikes.userId, userId))
 			: Promise.resolve([]),
 		db.select({ count: count() }).from(playlistLikes)
 	]);
@@ -85,12 +96,25 @@ export async function storePlaylist(playlist: NewPlaylist) {
 	await db.insert(playlists).values(playlist);
 }
 
-export async function updatePlaylist(playlist: Playlist) {
-	await db.update(playlists).set(playlist).where(eq(playlists.id, playlist.id));
+export async function updatePlaylist({ playlist, userId }: { playlist: Playlist, userId: string }) {
+	const result = await db
+		.update(playlists)
+		.set(playlist)
+		.where(and(eq(playlists.id, playlist.id), eq(playlists.userId, userId)))
+		.returning();
+	if (result.length === 0) {
+		throw new Error('Playlist not found');
+	}
 }
 
-export async function deletePlaylist(id: number) {
-	await db.delete(playlists).where(eq(playlists.id, id));
+export async function deletePlaylist({ id, userId }: { id: number, userId: string }) {
+	const result = await db
+		.delete(playlists)
+		.where(and(eq(playlists.id, id), eq(playlists.userId, userId)))
+		.returning();
+	if (result.length === 0) {
+		throw new Error('Playlist not found');
+	}
 }
 
 export async function toggleLike({

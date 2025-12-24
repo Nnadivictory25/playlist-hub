@@ -129,6 +129,13 @@
 		@apply flex items-center gap-2 bg-secondary px-6 py-2 transition-all duration-100 hover:opacity-90;
 	}
 }
+
+@layer components {
+	.active-badge {
+		@apply border border-primary bg-primary/10 font-medium! text-primary!;
+	}
+}
+
 /* Like Animation Keyframes */
 @keyframes heart-pop {
 	0% {

@@ -24,7 +24,8 @@
 			offset: queryParams.offset.current,
 			search: queryParams.search.current,
 			genres: queryParams.genres.current,
-			platforms: queryParams.platforms.current
+			platforms: queryParams.platforms.current,
+			sortBy: queryParams.sortBy.current as 'latest' | 'popular'
 		})
 	});
 </script>

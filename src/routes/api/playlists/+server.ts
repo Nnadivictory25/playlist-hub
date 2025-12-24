@@ -6,12 +6,13 @@ import { json } from '@sveltejs/kit';
 export const GET: RequestHandler = async ({ url, locals }) => {
 	try {
 		const params = getQueryParams(url);
-		const { limit, offset, search, genres, platforms } = params;
+		const { limit, offset, search, sortBy, genres, platforms } = params;
 		const userId = locals.user?.id;
 
 		const data = await getPlaylists({
 			userId,
 			search,
+			sortBy,
 			platforms: platforms && platforms.length > 0 ? platforms : undefined,
 			genres: genres && genres.length > 0 ? genres : undefined,
 			limit,
