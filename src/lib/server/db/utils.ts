@@ -76,9 +76,9 @@ export async function getPlaylists(params: GetPlaylistsParams) {
 			.offset(offset ?? 0),
 		userId
 			? db
-				.select({ playlistId: playlistLikes.playlistId })
-				.from(playlistLikes)
-				.where(eq(playlistLikes.userId, userId))
+					.select({ playlistId: playlistLikes.playlistId })
+					.from(playlistLikes)
+					.where(eq(playlistLikes.userId, userId))
 			: Promise.resolve([]),
 		db.select({ count: count() }).from(playlistLikes)
 	]);
@@ -96,7 +96,7 @@ export async function storePlaylist(playlist: NewPlaylist) {
 	await db.insert(playlists).values(playlist);
 }
 
-export async function updatePlaylist({ playlist, userId }: { playlist: Playlist, userId: string }) {
+export async function updatePlaylist({ playlist, userId }: { playlist: Playlist; userId: string }) {
 	const result = await db
 		.update(playlists)
 		.set(playlist)
@@ -107,7 +107,7 @@ export async function updatePlaylist({ playlist, userId }: { playlist: Playlist,
 	}
 }
 
-export async function deletePlaylist({ id, userId }: { id: number, userId: string }) {
+export async function deletePlaylist({ id, userId }: { id: number; userId: string }) {
 	const result = await db
 		.delete(playlists)
 		.where(and(eq(playlists.id, id), eq(playlists.userId, userId)))

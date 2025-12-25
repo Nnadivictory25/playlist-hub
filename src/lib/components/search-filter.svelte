@@ -8,6 +8,7 @@
 		Flame,
 		ListFilter,
 		Music4,
+		Trash2,
 		XIcon
 	} from '@lucide/svelte';
 	import { useQueryStates } from 'nuqs-svelte';
@@ -15,7 +16,7 @@
 	import { genres, platforms, type Genre, type Platform } from '$lib/filters';
 	import { cn } from '$lib/utils';
 	import Badge from './ui/badge/badge.svelte';
-	import CreatePlaylist from './create-playlist.svelte';
+	import CreatePlaylist from './upload-playlist.svelte';
 	import CheckIcon from '@lucide/svelte/icons/check';
 
 	const { query }: { query: ReturnType<typeof useQueryStates<typeof playlistsQueryParser>> } =
@@ -101,6 +102,14 @@
 		query.sortBy.current = 'popular';
 	}
 
+	function clearFilter(filterType: 'genres' | 'platforms') {
+		if (filterType === 'genres') {
+			query.genres.current = [];
+		} else {
+			query.platforms.current = [];
+		}
+	}
+
 	let sortOptions = ['popular', 'latest'];
 </script>
 
@@ -180,13 +189,27 @@
 				{@const isGenres = filter === 'genres'}
 				{@const selectedOptions = isGenres ? selectedGenres : selectedPlatforms}
 				<DropdownMenu.Root bind:open={filterDropdownStates[filter]}>
-					<DropdownMenu.Trigger class="cursor-pointer">
+					<DropdownMenu.Trigger class="group relative cursor-pointer">
 						<Badge
 							variant="outline"
 							class={cn('px-3 text-sm', selectedOptions.length > 0 ? 'active-badge' : '')}
 						>
 							{capitalize(filter)} ({selectedOptions.length})
 						</Badge>
+						<button
+							class="pointer-events-none absolute -top-3 -right-1 z-10 flex size-5 cursor-pointer items-center justify-center rounded-full bg-white opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100 hover:scale-110 hover:bg-red-100"
+							aria-label="Clear filter"
+							title="Clear filter"
+							aria-describedby="clear-filter-description"
+							onclick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								clearFilter(filter);
+							}}
+						>
+							<Trash2 size={14} strokeWidth={2} class="text-red-500" />
+						</button>
+						<span id="clear-filter-description" class="sr-only">Clear filter</span>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content
 						class="custom-scrollbar relative ml-1 max-h-50 w-55 overflow-y-auto lg:ml-25"
@@ -231,14 +254,14 @@
 			{/each}
 			<Badge
 				variant="outline"
-				class="cursor-pointer px-3 text-sm font-normal text-gray-600 hover:bg-primary/10"
+				class="cursor-pointer border-red-500 px-3 text-sm font-normal text-red-500 hover:border-red-500/20 hover:bg-red-500/30 hover:text-red-600"
 				onclick={clearAllFilters}
 				aria-label="Clear all filters"
 				title="Clear all filters"
 				aria-describedby="clear-all-filters-description"
 			>
-				<XIcon size={20} strokeWidth={2} aria-hidden="true" />
-				Clear
+				<XIcon size={20} strokeWidth={2} aria-hidden="true" class="text-red-500" />
+				Clear all
 			</Badge>
 			<span id="clear-all-filters-description" class="sr-only">Clear all filters</span>
 		</div>

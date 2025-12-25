@@ -22,6 +22,34 @@ declare global {
 	type GetUserPlaylistsResult = {
 		playlists: Playlist[];
 	};
+
+	type PlaylistInfoResult = {
+		title: string;
+		description: string;
+		imageUrl: string;
+		songCount: number;
+	};
+
+	// YouTube Music API Types
+	type YouTubePlaylistItem = {
+		id: string;
+		snippet: {
+			title: string;
+			description: string;
+			thumbnails: {
+				medium: {
+					url: string;
+				};
+			};
+		};
+		contentDetails: {
+			itemCount: number;
+		};
+	};
+
+	type YouTubePlaylistListResponse = {
+		items: YouTubePlaylistItem[];
+	};
 }
 
 export {};

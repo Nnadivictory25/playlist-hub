@@ -12,27 +12,43 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import { XIcon } from '@lucide/svelte';
 	import Badge from './ui/badge/badge.svelte';
+	import { usePlaylistInfo } from '$lib/hooks/usePlaylistInfo';
 
-	let selectedPlatform = $state<Platform | undefined>(undefined);
-	let selectedGenres = $state<Genre[]>([]);
+	type PlaylistUploadFormData = {
+		playlistName: string;
+		playlistUrl: string;
+		selectedGenres: Genre[];
+		selectedPlatform: Platform | undefined;
+	};
+
+	let formData = $state<PlaylistUploadFormData>({
+		playlistName: '',
+		playlistUrl: '',
+		selectedGenres: [],
+		selectedPlatform: undefined
+	});
 
 	let genreDropdownOpen = $state(false);
 
 	function toggleGenre(genre: Genre) {
-		if (selectedGenres.includes(genre)) {
-			selectedGenres = selectedGenres.filter((g) => g !== genre);
+		if (formData.selectedGenres.includes(genre)) {
+			formData.selectedGenres = formData.selectedGenres.filter((g) => g !== genre);
 		} else {
-			selectedGenres = [...selectedGenres, genre];
+			formData.selectedGenres = [...formData.selectedGenres, genre];
 		}
 	}
+
+	// const { data: playlistInfo } = usePlaylistInfo({
+	// 	playlistId: playlistId,
+	// 	platform: selectedPlatform
+	// });
 </script>
 
-<Dialog.Root>
+<Dialog.Root open={true}>
 	<form>
-		<Dialog.Trigger
-			class={cn(buttonVariants({ variant: 'default' }), 'h-7 cursor-pointer rounded-full px-4!')}
-			>Upload Playlist
+		<Dialog.Trigger class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4!')}>
 			<Plus size={17} strokeWidth={2.5} class="" />
+			Upload Playlist
 		</Dialog.Trigger>
 		<Dialog.Content class="sm:max-w-[425px]">
 			<Dialog.Header>
@@ -42,20 +58,25 @@
 			<div class="grid gap-4">
 				<div class="grid gap-3">
 					<Label for="name-1">Name</Label>
-					<Input id="name-1" name="name" placeholder="Enter playlist name" />
+					<Input
+						id="name-1"
+						name="name"
+						placeholder="Enter playlist name"
+						bind:value={formData.playlistName}
+					/>
 				</div>
 				<div class="grid gap-3">
 					<Label for="platform-1">Platform</Label>
-					<Select.Root bind:value={selectedPlatform} type="single">
+					<Select.Root bind:value={formData.selectedPlatform} type="single">
 						<Select.Trigger id="platform-1" class="w-full">
-							{#if selectedPlatform}
+							{#if formData.selectedPlatform}
 								<div class="flex items-center gap-2">
 									<img
-										src={platformImages[selectedPlatform]}
-										alt={selectedPlatform}
+										src={platformImages[formData.selectedPlatform]}
+										alt={formData.selectedPlatform}
 										class="size-5 rounded"
 									/>
-									{capitalize(selectedPlatform)}
+									{capitalize(formData.selectedPlatform as Platform)}
 								</div>
 							{:else}
 								Select platform
@@ -76,9 +97,9 @@
 				<div class="grid gap-3">
 					<Label for="genre-1">Genre</Label>
 					<div class="relative space-y-2">
-						{#if selectedGenres.length > 0}
+						{#if formData.selectedGenres.length > 0}
 							<div class="flex flex-wrap gap-2">
-								{#each selectedGenres as genre (genre)}
+								{#each formData.selectedGenres as genre (genre)}
 									<Badge
 										variant="outline"
 										class="active-badge cursor-pointer px-3 text-sm"
@@ -104,7 +125,7 @@
 										}}
 									>
 										{genre}
-										{#if selectedGenres.includes(genre)}
+										{#if formData.selectedGenres.includes(genre)}
 											<CheckIcon size={17} strokeWidth={2} class="text-primary" />
 										{/if}
 									</DropdownMenu.Item>

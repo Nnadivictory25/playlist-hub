@@ -28,29 +28,22 @@ export type Genre =
 	| 'Trap'
 	| 'World';
 
-export type Platform = 'spotify' | 'youtube music' | 'apple music' | 'soundcloud';
+export type Platform = 'spotify' | 'youtube music' | 'apple music';
 
-export const platforms: readonly Platform[] = [
-	'spotify',
-	'youtube music',
-	'apple music',
-	'soundcloud'
-] as const;
+export const platforms: readonly Platform[] = ['spotify', 'youtube music', 'apple music'] as const;
 
 // URL-safe mapping for platforms (for query params)
 export const platformUrlMap: Record<Platform, string> = {
 	spotify: 'spotify',
 	'youtube music': 'youtube-music',
-	'apple music': 'apple-music',
-	soundcloud: 'soundcloud'
+	'apple music': 'apple-music'
 };
 
 // Reverse mapping: URL-safe value -> Platform
 export const platformUrlReverseMap: Record<string, Platform> = {
 	spotify: 'spotify',
 	'youtube-music': 'youtube music',
-	'apple-music': 'apple music',
-	soundcloud: 'soundcloud'
+	'apple-music': 'apple music'
 };
 
 // Helper functions to convert between URL-safe and Platform values
