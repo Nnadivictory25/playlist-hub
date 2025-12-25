@@ -5,6 +5,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
+	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { cn } from '../utils';
 	import { capitalize, platformImages } from '$lib/app-utils';
 	import { Plus } from '@lucide/svelte';
@@ -13,22 +14,24 @@
 	import { XIcon } from '@lucide/svelte';
 	import Badge from './ui/badge/badge.svelte';
 	import { usePlaylistInfo } from '$lib/hooks/usePlaylistInfo';
-
-	type PlaylistUploadFormData = {
-		playlistName: string;
-		playlistUrl: string;
-		selectedGenres: Genre[];
-		selectedPlatform: Platform | undefined;
-	};
+	import Spinner from './ui/spinner/spinner.svelte';
+	import { toast } from 'svelte-sonner';
+	import { authClient } from '$lib/auth-client';
+	import { useUpload } from '$lib/hooks/useUpload';
+	import { useQueryClient } from '@tanstack/svelte-query';
+	const session = authClient.useSession();
+	const queryClient = useQueryClient();
 
 	let formData = $state<PlaylistUploadFormData>({
 		playlistName: '',
+		playlistDescription: '',
 		playlistUrl: '',
 		selectedGenres: [],
 		selectedPlatform: undefined
 	});
 
 	let genreDropdownOpen = $state(false);
+	let dialogOpen = $state(false);
 
 	function toggleGenre(genre: Genre) {
 		if (formData.selectedGenres.includes(genre)) {
@@ -38,37 +41,84 @@
 		}
 	}
 
-	// const { data: playlistInfo } = usePlaylistInfo({
-	// 	playlistId: playlistId,
-	// 	platform: selectedPlatform
-	// });
+	// Using derived for reactivity
+	const { data: playlistInfo, isLoading: isLoadingPlaylistInfo } = $derived(
+		usePlaylistInfo({
+			url: formData.playlistUrl,
+			platform: formData.selectedPlatform as Platform
+		})
+	);
+
+	// Syncing the playlist info response to the form data cause user can edit the playlist name and description later after the initial fetch
+	$effect(() => {
+		if (playlistInfo) {
+			formData.playlistName = playlistInfo.title;
+			formData.playlistDescription = playlistInfo.description;
+		}
+	});
+
+	const canSubmit = $derived(
+		formData.playlistName.length > 0 &&
+			formData.playlistUrl.length > 0 &&
+			formData.selectedPlatform &&
+			formData.selectedGenres.length > 0 &&
+			playlistInfo !== undefined
+	);
+
+	let isSubmitting = $state(false);
+
+	const { mutateAsync: upload } = useUpload();
+
+	async function handleSubmit(e: Event) {
+		e.preventDefault();
+
+		if (!$session.data?.user) {
+			toast.error('Please login to upload a playlist');
+			return;
+		}
+
+		if (!playlistInfo) {
+			toast.error('Failed to fetch playlist info');
+			return;
+		}
+
+		isSubmitting = true;
+		try {
+			await upload({
+				formData,
+				userId: $session.data.user.id,
+				playlistInfo
+			});
+			toast.success('Playlist uploaded successfully');
+			await queryClient.invalidateQueries({ queryKey: ['playlists'] });
+			dialogOpen = false;
+		} catch (error) {
+			toast.error((error as Error).message);
+		} finally {
+			isSubmitting = false;
+		}
+	}
 </script>
 
-<Dialog.Root open={true}>
-	<form>
-		<Dialog.Trigger class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4!')}>
-			<Plus size={17} strokeWidth={2.5} class="" />
-			Upload Playlist
-		</Dialog.Trigger>
-		<Dialog.Content class="sm:max-w-[425px]">
+<Dialog.Root bind:open={dialogOpen}>
+	<Dialog.Trigger class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4!')}>
+		<Plus size={17} strokeWidth={2.5} class="" />
+		Upload Playlist
+	</Dialog.Trigger>
+	<Dialog.Content class="sm:max-w-[425px]">
+		<form onsubmit={handleSubmit}>
 			<Dialog.Header>
 				<Dialog.Title>Upload Playlist</Dialog.Title>
 				<Dialog.Description>Upload your playlist for others to discover.</Dialog.Description>
 			</Dialog.Header>
-			<div class="grid gap-4">
+			<div class="mt-5 grid gap-4">
 				<div class="grid gap-3">
-					<Label for="name-1">Name</Label>
-					<Input
-						id="name-1"
-						name="name"
-						placeholder="Enter playlist name"
-						bind:value={formData.playlistName}
-					/>
-				</div>
-				<div class="grid gap-3">
-					<Label for="platform-1">Platform</Label>
+					<Label for="platform"
+						>Platform
+						<span class="text-red-500">*</span>
+					</Label>
 					<Select.Root bind:value={formData.selectedPlatform} type="single">
-						<Select.Trigger id="platform-1" class="w-full">
+						<Select.Trigger id="platform" class="w-full">
 							{#if formData.selectedPlatform}
 								<div class="flex items-center gap-2">
 									<img
@@ -95,7 +145,10 @@
 					</Select.Root>
 				</div>
 				<div class="grid gap-3">
-					<Label for="genre-1">Genre</Label>
+					<Label for="genre">
+						Genre
+						<span class="text-red-500">*</span>
+					</Label>
 					<div class="relative space-y-2">
 						{#if formData.selectedGenres.length > 0}
 							<div class="flex flex-wrap gap-2">
@@ -113,7 +166,12 @@
 						{/if}
 						<DropdownMenu.Root bind:open={genreDropdownOpen}>
 							<DropdownMenu.Trigger class="w-full">
-								<Input id="genre-1" readonly placeholder="Select genre(s)" class="cursor-pointer" />
+								<Input
+									id="genre"
+									readonly
+									placeholder={`Select ${formData.selectedGenres.length > 0 ? 'more' : ''} genre(s)`}
+									class="cursor-pointer"
+								/>
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Content class="max-h-60 w-56 overflow-y-auto">
 								{#each genres as genre (genre)}
@@ -134,11 +192,66 @@
 						</DropdownMenu.Root>
 					</div>
 				</div>
+
+				<div class="grid gap-3">
+					<Label for="url">
+						URL
+						<span class="text-red-500">*</span>
+					</Label>
+					<Input
+						disabled={isLoadingPlaylistInfo}
+						id="url"
+						name="url"
+						placeholder="Enter playlist URL"
+						bind:value={formData.playlistUrl}
+					/>
+					{#if isLoadingPlaylistInfo}
+						<div class="flex animate-pulse items-center gap-1 text-sm text-primary">
+							<Spinner /> Loading playlist info...
+						</div>
+					{/if}
+				</div>
+
+				{#if playlistInfo}
+					<div class="grid gap-3">
+						<Label for="name">
+							Playlist Name
+							<span class="text-red-500">*</span>
+						</Label>
+						<Input
+							id="name"
+							placeholder="Enter playlist name"
+							required
+							bind:value={formData.playlistName}
+						/>
+					</div>
+					<div class="grid gap-3">
+						<Label for="description">
+							Description
+							<span class="text-red-500">*</span>
+						</Label>
+						<Textarea
+							id="description"
+							placeholder="Enter playlist description"
+							required
+							bind:value={formData.playlistDescription}
+						/>
+					</div>
+				{/if}
 			</div>
-			<Dialog.Footer>
+			<Dialog.Footer class="mt-4">
 				<Dialog.Close class={buttonVariants({ variant: 'outline' })}>Cancel</Dialog.Close>
-				<Button type="submit">Save changes</Button>
+				<Button
+					disabled={isLoadingPlaylistInfo || !canSubmit || !$session.data?.user}
+					type="submit"
+				>
+					{#if isSubmitting}
+						<Spinner size="sm" /> Uploading...
+					{:else}
+						Upload
+					{/if}
+				</Button>
 			</Dialog.Footer>
-		</Dialog.Content>
-	</form>
+		</form>
+	</Dialog.Content>
 </Dialog.Root>

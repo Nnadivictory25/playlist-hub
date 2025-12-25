@@ -1,12 +1,13 @@
 import type { RequestHandler } from '../$types';
 import { getUserPlaylists } from '$lib/server/db/utils';
 import { json } from '@sveltejs/kit';
+import { unauthorized } from '$lib/server/api-helpers';
 
 export const GET: RequestHandler = async ({ locals }) => {
 	try {
 		const user = locals.user;
 		if (!user) {
-			return json({ success: false, error: 'Unauthorized' }, { status: 401 });
+			return unauthorized();
 		}
 
 		const playlists = await getUserPlaylists(user.id);

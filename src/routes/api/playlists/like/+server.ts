@@ -1,12 +1,13 @@
 import type { RequestHandler } from './$types';
 import { toggleLike } from '$lib/server/db/utils';
 import { json } from '@sveltejs/kit';
+import { unauthorized } from '$lib/server/api-helpers';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
 		const user = locals.user;
 		if (!user) {
-			return json({ success: false, error: 'Unauthorized' }, { status: 401 });
+			return unauthorized();
 		}
 
 		const { playlistId } = (await request.json()) as { playlistId: number };

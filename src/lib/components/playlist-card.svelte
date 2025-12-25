@@ -14,9 +14,10 @@
 		playlist: Playlist;
 		userId: string;
 		isLiked: boolean;
+		isUser?: boolean;
 	};
 
-	let { playlist, userId, isLiked }: PlaylistCardProps = $props();
+	let { playlist, userId, isLiked, isUser = false }: PlaylistCardProps = $props();
 
 	const { mutate: toggleLike } = useMutateLike({
 		playlistId: playlist.id,

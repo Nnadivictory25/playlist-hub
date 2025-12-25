@@ -15,19 +15,15 @@ export type QueryParams = {
 type UsePlaylistsParams = {
 	initialData: GetPlaylistsResult;
 	user?: User;
-	queryParams: QueryParams | (() => QueryParams);
+	queryParams: () => QueryParams;
 };
 
 export function usePlaylists({ initialData, user, queryParams }: UsePlaylistsParams) {
-	// Helper to resolve params whether passed as object or function
-	const resolveParams = () => (typeof queryParams === 'function' ? queryParams() : queryParams);
-
 	// Capture the initial params to determine when to use initialData
-	const initialParams = resolveParams();
+	const initialParams = queryParams();
 
 	return createQuery(() => {
-		const params = resolveParams();
-
+		const params = queryParams();
 		// Only use initialData if the current params match the initial params
 		// We use JSON.stringify for a simple deep equality check
 		const isInitial = JSON.stringify(params) === JSON.stringify(initialParams);

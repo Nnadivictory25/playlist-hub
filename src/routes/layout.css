@@ -121,12 +121,37 @@
 		font-family: 'Rubik Variable', sans-serif;
 	}
 
+	button {
+		@apply cursor-pointer!;
+	}
+
 	a.primary {
 		@apply flex items-center gap-2 bg-primary px-6 py-2 text-white transition-all duration-100 hover:opacity-90;
 	}
 
 	a.secondary {
 		@apply flex items-center gap-2 bg-secondary px-6 py-2 transition-all duration-100 hover:opacity-90;
+	}
+
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus,
+	textarea:-webkit-autofill,
+	textarea:-webkit-autofill:hover,
+	textarea:-webkit-autofill:focus {
+		-webkit-box-shadow: 0 0 0 30px var(--background) inset !important;
+		-webkit-text-fill-color: var(--foreground) !important;
+		caret-color: var(--primary);
+	}
+
+	input,
+	textarea {
+		caret-color: var(--primary);
+	}
+
+	::selection {
+		background-color: var(--primary);
+		color: var(--primary-foreground);
 	}
 }
 

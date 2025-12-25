@@ -1,23 +1,15 @@
 <script lang="ts">
-	import { capitalize, debounce, playlistsQueryParser, platformImages } from '$lib/app-utils';
+	import { capitalize, debounce, platformImages, playlistsQueryParser } from '$lib/app-utils';
+	import { authClient } from '$lib/auth-client';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import {
-		ArrowUpDownIcon,
-		AudioLines,
-		Clock,
-		Flame,
-		ListFilter,
-		Music4,
-		Trash2,
-		XIcon
-	} from '@lucide/svelte';
-	import { useQueryStates } from 'nuqs-svelte';
-	import { Input } from './ui/input';
 	import { genres, platforms, type Genre, type Platform } from '$lib/filters';
 	import { cn } from '$lib/utils';
-	import Badge from './ui/badge/badge.svelte';
-	import CreatePlaylist from './upload-playlist.svelte';
+	import { AudioLines, Clock, Flame, ListFilter, Music4, Trash2, XIcon } from '@lucide/svelte';
 	import CheckIcon from '@lucide/svelte/icons/check';
+	import { useQueryStates } from 'nuqs-svelte';
+	import Badge from './ui/badge/badge.svelte';
+	import { Input } from './ui/input';
+	import CreatePlaylist from './upload-playlist.svelte';
 
 	const { query }: { query: ReturnType<typeof useQueryStates<typeof playlistsQueryParser>> } =
 		$props();

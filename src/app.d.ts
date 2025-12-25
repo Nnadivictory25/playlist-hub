@@ -1,5 +1,6 @@
 import type { Session, User } from 'better-auth';
-import type { Playlist } from './lib/server/db/schema';
+import type { Playlist } from '$lib/server/db/schema';
+import type { Genre, Platform } from '$lib/filters';
 
 declare global {
 	namespace App {
@@ -50,6 +51,14 @@ declare global {
 	type YouTubePlaylistListResponse = {
 		items: YouTubePlaylistItem[];
 	};
+
+	type PlaylistUploadFormData = {
+		playlistName: string;
+		playlistDescription: string;
+		playlistUrl: string;
+		selectedGenres: Genre[];
+		selectedPlatform: Platform | undefined;
+	};
 }
 
-export {};
+export { };

@@ -7,10 +7,14 @@ export interface ValidatedRequest {
 	playlistUrl: string;
 }
 
+export function unauthorized() {
+	return json({ success: false, error: 'Unauthorized' }, { status: 401 });
+}
+
 export function validateAuthAndPlaylistUrl(event: RequestEvent): Response | ValidatedRequest {
 	const { user, session } = event.locals;
 	if (!user || !session) {
-		return json({ success: false, error: 'Unauthorized' }, { status: 401 });
+		return unauthorized();
 	}
 
 	const playlistUrl = event.url.searchParams.get('playlistUrl');

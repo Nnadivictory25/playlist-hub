@@ -37,12 +37,12 @@ export const playlists = sqliteTable(
 	{
 		id: integer('id').primaryKey({ autoIncrement: true }),
 		name: text('name').notNull(),
-		description: text('description'),
+		description: text('description').notNull(),
 		likes: integer('likes').notNull().default(0),
 		songCount: integer('song_count').notNull().default(0),
 		imageUrl: text('image_url').notNull(),
 		platform: text('platform', { enum: platforms as [string, ...string[]] }).notNull(),
-		genre: jsonArray('genre').$type<Genre[]>(),
+		genre: jsonArray('genre').$type<Genre[]>().notNull(),
 		url: text('url').notNull(),
 		userId: text('user_id')
 			.notNull()
