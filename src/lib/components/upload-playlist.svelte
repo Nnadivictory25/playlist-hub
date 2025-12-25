@@ -240,7 +240,9 @@
 				{/if}
 			</div>
 			<Dialog.Footer class="mt-4">
-				<Dialog.Close class={buttonVariants({ variant: 'outline' })}>Cancel</Dialog.Close>
+				<Dialog.Close type="button" class={buttonVariants({ variant: 'outline' })}
+					>Cancel</Dialog.Close
+				>
 				<Button
 					disabled={isLoadingPlaylistInfo || !canSubmit || !$session.data?.user}
 					type="submit"
