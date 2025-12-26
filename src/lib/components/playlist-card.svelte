@@ -20,7 +20,9 @@
 	let { playlist, userId, isLiked, isUser = false }: PlaylistCardProps = $props();
 
 	const { mutate: toggleLike } = useMutateLike({
+		// svelte-ignore state_referenced_locally
 		playlistId: playlist.id,
+		// svelte-ignore state_referenced_locally
 		userId,
 		queryParams: getQueryParams(page.url),
 		queryClient
@@ -44,7 +46,7 @@
 	};
 </script>
 
-<Card.Root class="h-full overflow-hidden p-0 shadow-none! fade-in-100">
+<Card.Root class="group h-full overflow-hidden p-0 shadow-none! fade-in-100">
 	<div class="relative flex h-full flex-col px-0">
 		<img
 			src={platformImages[playlist.platform as Platform]}
