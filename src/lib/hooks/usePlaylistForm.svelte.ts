@@ -41,7 +41,7 @@ export function usePlaylistForm(userId: string) {
 	});
 
 	// Using $derived to ensure the playlistInfo query is re-run when the formData changes
-	const { data: playlistInfo, isLoading: isLoadingPlaylistInfo } = $derived(usePlaylistInfo({
+	const { data: playlistInfo, isLoading: isLoadingPlaylistInfo, error: playlistInfoError } = $derived(usePlaylistInfo({
 		url: formData.playlistUrl,
 		platform: formData.selectedPlatform!,
 		isEdit
@@ -51,6 +51,10 @@ export function usePlaylistForm(userId: string) {
 		if (playlistInfo && !isEdit) {
 			formData.playlistName = playlistInfo.title;
 			formData.playlistDescription = playlistInfo.description;
+		}
+
+		if (playlistInfoError) {
+			toast.error(playlistInfoError.message);
 		}
 	});
 
