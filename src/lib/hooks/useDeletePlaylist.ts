@@ -11,7 +11,9 @@ export function useDeletePlaylist() {
 			return res.json();
 		},
 		onSuccess: () => {
+			// Invalidate both playlist queries
 			queryClient.invalidateQueries({ queryKey: ['playlists'] });
+			queryClient.invalidateQueries({ queryKey: ['user-dashboard'] });
 		}
 	}));
 }

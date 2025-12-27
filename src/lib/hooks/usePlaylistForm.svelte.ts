@@ -114,7 +114,11 @@ export function usePlaylistForm(userId: string) {
 				toast.success('Playlist uploaded successfully');
 			}
 
-			await queryClient.invalidateQueries({ queryKey: ['playlists'] });
+			// Invalidate both playlist queries
+			await Promise.all([
+				queryClient.invalidateQueries({ queryKey: ['playlists'] }),
+				queryClient.invalidateQueries({ queryKey: ['user-dashboard'] })
+			]);
 			uploadModalStore.open = false;
 		} catch (error) {
 			toast.error((error as Error).message);

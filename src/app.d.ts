@@ -16,12 +16,16 @@ declare global {
 
 	type GetPlaylistsResult = {
 		playlists: Playlist[];
-		userLikedPlaylists: number[];
-		totalLikes: number;
+		userLikedPlaylistsIds: number[];
+		totalLikes?: number;
 	};
 
-	type GetUserPlaylistsResult = {
-		playlists: Playlist[];
+	type GetUserDashboardResult = {
+		userPlaylists: Playlist[];
+		likedPlaylists: Playlist[];
+		userLikedPlaylistsIds: number[];
+		uploadedCount: number;
+		likedCount: number;
 	};
 
 	type PlaylistInfoResult = {

@@ -10,7 +10,6 @@
 	import { useQueryClient } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
-	const queryClient = useQueryClient();
 
 	type PlaylistCardProps = {
 		playlist: Playlist;
@@ -20,12 +19,11 @@
 
 	let { playlist, userId, isLiked }: PlaylistCardProps = $props();
 
+	const queryClient = useQueryClient();
+
 	const { mutate: toggleLike } = useMutateLike({
 		// svelte-ignore state_referenced_locally
-		playlistId: playlist.id,
-		// svelte-ignore state_referenced_locally
 		userId,
-		queryParams: getQueryParams(page.url),
 		queryClient
 	});
 
@@ -37,7 +35,7 @@
 			return;
 		}
 		isAnimating = true;
-		toggleLike();
+		toggleLike(playlist.id);
 		setTimeout(() => (isAnimating = false), 600);
 	};
 
@@ -47,7 +45,7 @@
 	};
 </script>
 
-<div transition:fade>
+<div transition:fade={{ duration: 100 }}>
 	<Card.Root class="group relative h-full overflow-hidden p-0 shadow-none!">
 		<Action {playlist} />
 		<div class="relative flex h-full flex-col px-0">

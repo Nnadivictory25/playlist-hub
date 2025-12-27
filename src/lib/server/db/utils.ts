@@ -1,6 +1,6 @@
 import { DEFAULT_LIMIT } from '$lib/app-utils';
 import type { Genre } from '$lib/filters';
-import { and, count, desc, eq, like, or, sql } from 'drizzle-orm';
+import { and, count, desc, eq, inArray, like, or, sql } from 'drizzle-orm';
 import { db } from '.';
 import { playlistLikes, playlists, type NewPlaylist, type Playlist } from './schema';
 
@@ -76,20 +76,62 @@ export async function getPlaylists(params: GetPlaylistsParams) {
 			.offset(offset ?? 0),
 		userId
 			? db
-					.select({ playlistId: playlistLikes.playlistId })
-					.from(playlistLikes)
-					.where(eq(playlistLikes.userId, userId))
+				.select({ playlistId: playlistLikes.playlistId })
+				.from(playlistLikes)
+				.where(eq(playlistLikes.userId, userId))
 			: Promise.resolve([]),
 		db.select({ count: count() }).from(playlistLikes)
 	]);
 
-	const userLikedPlaylists = userLikedLikes.map((like) => like.playlistId);
+	const userLikedPlaylistsIds = userLikedLikes.map((like) => like.playlistId);
 
-	return { playlists: playlistsData, userLikedPlaylists, totalLikes: totalLikes.count };
+	return { playlists: playlistsData, userLikedPlaylistsIds, totalLikes: totalLikes.count };
 }
 
 export async function getUserPlaylists(userId: string) {
 	return await db.select().from(playlists).where(eq(playlists.userId, userId));
+}
+
+export async function getUserLikedPlaylists(userId: string) {
+	const userLikedLikes = await db
+		.select({ playlistId: playlistLikes.playlistId })
+		.from(playlistLikes)
+		.where(eq(playlistLikes.userId, userId));
+	return userLikedLikes.map((like) => like.playlistId);
+}
+
+export async function getUserLikedPlaylistsData(userId: string) {
+	const likedPlaylistIds = await getUserLikedPlaylists(userId);
+	if (likedPlaylistIds.length === 0) {
+		return [];
+	}
+	return await db.select().from(playlists).where(inArray(playlists.id, likedPlaylistIds));
+}
+
+export async function getUserLikedPlaylistsCount(userId: string) {
+	const [result] = await db
+		.select({ count: count() })
+		.from(playlistLikes)
+		.where(eq(playlistLikes.userId, userId));
+	return result.count;
+}
+
+export async function getUserPlaylistsTotalLikes(userId: string) {
+	const userPlaylistsData = await db
+		.select({ id: playlists.id })
+		.from(playlists)
+		.where(eq(playlists.userId, userId));
+
+	if (userPlaylistsData.length === 0) {
+		return 0;
+	}
+
+	const playlistIds = userPlaylistsData.map((p) => p.id);
+	const [result] = await db
+		.select({ count: count() })
+		.from(playlistLikes)
+		.where(inArray(playlistLikes.playlistId, playlistIds));
+	return result.count;
 }
 
 export async function storePlaylist(playlist: NewPlaylist) {

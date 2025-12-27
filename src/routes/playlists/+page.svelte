@@ -45,9 +45,9 @@
 		{:else if playlistsQuery.error}
 			<p>Something went wrong: {playlistsQuery.error.message}</p>
 		{:else if playlistsQuery.data?.playlists.length && playlistsQuery.data.playlists.length > 0}
-			{@const { userLikedPlaylists, playlists } = playlistsQuery.data}
+			{@const { userLikedPlaylistsIds, playlists } = playlistsQuery.data}
 			{#each playlists as playlist, index (index)}
-				{@const isLiked = userLikedPlaylists.includes(playlist.id)}
+				{@const isLiked = userLikedPlaylistsIds.includes(playlist.id)}
 				<PlaylistCard {playlist} userId={user?.id ?? ''} {isLiked} />
 			{/each}
 		{:else}
