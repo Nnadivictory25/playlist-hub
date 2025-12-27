@@ -37,8 +37,8 @@
 		<p>
 			Built with ❤️ by <a
 				class="font-medium text-primary transition-all hover:underline"
-				href="https://github.com/NnadiVictory25"
-				target="_blank">Victory</a
+				href="https://x.com/nnvictory001"
+				target="_blank">@Victory</a
 			>
 		</p>
 	</footer>
