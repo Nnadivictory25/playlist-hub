@@ -32,7 +32,7 @@
 	</div>
 
 	<footer
-		class="fixed right-0 bottom-0 left-0 flex items-center justify-center border-t bg-white py-2"
+		class="fixed right-0 bottom-0 left-0 flex items-center justify-center bg-transparent py-1"
 	>
 		<p>
 			Built with ❤️ by <a
