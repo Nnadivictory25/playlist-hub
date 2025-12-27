@@ -30,6 +30,18 @@
 			</a>
 		</div>
 	</div>
+
+	<footer
+		class="fixed right-0 bottom-0 left-0 flex items-center justify-center border-t bg-white py-2"
+	>
+		<p>
+			Built with ❤️ by <a
+				class="font-medium text-primary transition-all hover:underline"
+				href="https://github.com/NnadiVictory25"
+				target="_blank">Victory</a
+			>
+		</p>
+	</footer>
 </section>
 
 <style>
