@@ -7,6 +7,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { parseAsString } from 'nuqs-svelte';
 	import { useQueryState } from 'nuqs-svelte';
+	import Logout from '$lib/components/logout.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -31,13 +32,26 @@
 	);
 </script>
 
+<svelte:head>
+	<title>Dashboard - PlaylistHub</title>
+</svelte:head>
+
 <section class="pt-20">
-	<div class="flex items-center justify-between">
+	<div class="flex flex-wrap items-center justify-between gap-5">
 		<div>
 			<h1 class="text-2xl font-bold">Dashboard</h1>
 			<p class="text-sm text-gray-500">View your uploaded playlists.</p>
 		</div>
-		<UploadPlaylist />
+		<div class="md:hidden">
+			<Logout />
+		</div>
+
+		<div class="flex items-center gap-2">
+			<UploadPlaylist />
+			<div class="hidden md:block">
+				<Logout />
+			</div>
+		</div>
 	</div>
 
 	<Tabs.Root bind:value={activeTab.current}>

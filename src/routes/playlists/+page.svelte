@@ -31,6 +31,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Playlists - PlaylistHub</title>
+</svelte:head>
+
 <section class="pt-20">
 	<h1 class="text-2xl font-bold">Playlists</h1>
 	<p class="text-sm text-gray-500">Discover and share your favorite playlists.</p>

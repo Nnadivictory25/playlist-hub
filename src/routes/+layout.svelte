@@ -18,10 +18,25 @@
 	});
 
 	let { data, children }: LayoutProps = $props();
+	const title = 'PlaylistHub - Discover and share your favorite playlists';
+	const description =
+		'Explore new music, get inspired by others, and add your own playlists to the community.';
 </script>
 
 <svelte:head>
 	<link rel="icon" href={logo} />
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={description} />
+	<meta property="og:image" content="https://playlisthub.online/og.png" />
+	<meta property="og:url" content="https://playlisthub.online" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content="https://playlisthub.online/og.png" />
+	<link rel="canonical" href="https://playlisthub.online" />
 </svelte:head>
 
 <Toaster />
