@@ -13,103 +13,57 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import { XIcon } from '@lucide/svelte';
 	import Badge from './ui/badge/badge.svelte';
-	import { usePlaylistInfo } from '$lib/hooks/usePlaylistInfo';
 	import Spinner from './ui/spinner/spinner.svelte';
-	import { toast } from 'svelte-sonner';
 	import { authClient } from '$lib/auth-client';
-	import { useUpload } from '$lib/hooks/useUpload';
-	import { useQueryClient } from '@tanstack/svelte-query';
+	import { usePlaylistForm } from '$lib/hooks/usePlaylistForm.svelte';
+	import { usePlaylistModal } from '$lib/hooks/usePlaylistModal.svelte';
+	import { uploadModalStore } from '$lib/store.svelte';
+
 	const session = authClient.useSession();
-	const queryClient = useQueryClient();
+	const userId = $derived($session.data?.user?.id || '');
 
-	let formData = $state<PlaylistUploadFormData>({
-		playlistName: '',
-		playlistDescription: '',
-		playlistUrl: '',
-		selectedGenres: [],
-		selectedPlatform: undefined
-	});
+	let {
+		formData,
+		isEdit,
+		playlistInfo,
+		isLoadingPlaylistInfo,
+		canSubmit,
+		isSubmitting,
+		genreDropdownOpen,
+		toggleGenre,
+		isGenreSelected,
+		resetForm,
+		handleSubmit
+	} = $derived(usePlaylistForm(userId));
 
-	let genreDropdownOpen = $state(false);
-	let dialogOpen = $state(false);
+	const playlistModal = usePlaylistModal();
 
-	function toggleGenre(genre: Genre) {
-		if (formData.selectedGenres.includes(genre)) {
-			formData.selectedGenres = formData.selectedGenres.filter((g) => g !== genre);
-		} else {
-			formData.selectedGenres = [...formData.selectedGenres, genre];
+	function handleOpenChange(open: boolean) {
+		if (open) {
+			resetForm();
+			playlistModal.openUploadModal();
 		}
 	}
 
-	// Using derived for reactivity
-	const { data: playlistInfo, isLoading: isLoadingPlaylistInfo } = $derived(
-		usePlaylistInfo({
-			url: formData.playlistUrl,
-			platform: formData.selectedPlatform as Platform
-		})
-	);
-
-	// Syncing the playlist info response to the form data cause user can edit the playlist name and description later after the initial fetch
-	$effect(() => {
-		if (playlistInfo) {
-			formData.playlistName = playlistInfo.title;
-			formData.playlistDescription = playlistInfo.description;
-		}
+	$inspect({
+		uploadModalStore
 	});
-
-	const canSubmit = $derived(
-		formData.playlistName.length > 0 &&
-			formData.playlistUrl.length > 0 &&
-			formData.selectedPlatform &&
-			formData.selectedGenres.length > 0 &&
-			playlistInfo !== undefined
-	);
-
-	let isSubmitting = $state(false);
-
-	const { mutateAsync: upload } = useUpload();
-
-	async function handleSubmit(e: Event) {
-		e.preventDefault();
-
-		if (!$session.data?.user) {
-			toast.error('Please login to upload a playlist');
-			return;
-		}
-
-		if (!playlistInfo) {
-			toast.error('Failed to fetch playlist info');
-			return;
-		}
-
-		isSubmitting = true;
-		try {
-			await upload({
-				formData,
-				userId: $session.data.user.id,
-				playlistInfo
-			});
-			toast.success('Playlist uploaded successfully');
-			await queryClient.invalidateQueries({ queryKey: ['playlists'] });
-			dialogOpen = false;
-		} catch (error) {
-			toast.error((error as Error).message);
-		} finally {
-			isSubmitting = false;
-		}
-	}
 </script>
 
-<Dialog.Root bind:open={dialogOpen}>
-	<Dialog.Trigger class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4!')}>
-		<Plus size={17} strokeWidth={2.5} class="" />
+<Dialog.Root bind:open={uploadModalStore.open} onOpenChange={handleOpenChange}>
+	<Dialog.Trigger class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4')}>
+		<Plus size={17} strokeWidth={2.5} />
 		Upload Playlist
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<form onsubmit={handleSubmit}>
 			<Dialog.Header>
-				<Dialog.Title>Upload Playlist</Dialog.Title>
-				<Dialog.Description>Upload your playlist for others to discover.</Dialog.Description>
+				<Dialog.Title>{isEdit ? 'Edit Playlist' : 'Upload Playlist'}</Dialog.Title>
+				<Dialog.Description
+					>{isEdit
+						? 'Edit your playlist information.'
+						: 'Upload your playlist for others to discover.'}</Dialog.Description
+				>
 			</Dialog.Header>
 			<div class="mt-5 grid gap-4">
 				<div class="grid gap-3">
@@ -117,8 +71,8 @@
 						>Platform
 						<span class="text-red-500">*</span>
 					</Label>
-					<Select.Root bind:value={formData.selectedPlatform} type="single">
-						<Select.Trigger id="platform" class="w-full">
+					<Select.Root disabled={isEdit} bind:value={formData.selectedPlatform} type="single">
+						<Select.Trigger id="platform" class="w-full disabled:cursor-not-allowed">
 							{#if formData.selectedPlatform}
 								<div class="flex items-center gap-2">
 									<img
@@ -170,10 +124,10 @@
 									id="genre"
 									readonly
 									placeholder={`Select ${formData.selectedGenres.length > 0 ? 'more' : ''} genre(s)`}
-									class="cursor-pointer"
+									class="relative cursor-pointer"
 								/>
 							</DropdownMenu.Trigger>
-							<DropdownMenu.Content class="max-h-60 w-56 overflow-y-auto">
+							<DropdownMenu.Content class="max-h-60 w-70 overflow-y-auto">
 								{#each genres as genre (genre)}
 									<DropdownMenu.Item
 										class="cursor-pointer justify-between"
@@ -183,7 +137,7 @@
 										}}
 									>
 										{genre}
-										{#if formData.selectedGenres.includes(genre)}
+										{#if isGenreSelected(genre)}
 											<CheckIcon size={17} strokeWidth={2} class="text-primary" />
 										{/if}
 									</DropdownMenu.Item>
@@ -199,7 +153,7 @@
 						<span class="text-red-500">*</span>
 					</Label>
 					<Input
-						disabled={isLoadingPlaylistInfo}
+						disabled={isLoadingPlaylistInfo || isEdit}
 						id="url"
 						name="url"
 						placeholder="Enter playlist URL"
@@ -212,7 +166,7 @@
 					{/if}
 				</div>
 
-				{#if playlistInfo}
+				{#if playlistInfo || isEdit}
 					<div class="grid gap-3">
 						<Label for="name">
 							Playlist Name
@@ -248,9 +202,9 @@
 					type="submit"
 				>
 					{#if isSubmitting}
-						<Spinner size="sm" /> Uploading...
+						<Spinner size="sm" /> {isEdit ? 'Updating...' : 'Uploading...'}
 					{:else}
-						Upload
+						{isEdit ? 'Update' : 'Upload'}
 					{/if}
 				</Button>
 			</Dialog.Footer>

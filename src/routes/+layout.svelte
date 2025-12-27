@@ -25,7 +25,7 @@
 </svelte:head>
 
 <Toaster />
-<main class="mx-auto max-w-6xl px-5 pt-16 pb-10">
+<main class="mx-auto max-w-6xl px-7 pt-16 pb-10">
 	<Navbar isSignedIn={data.isSignedIn} />
 	<NuqsAdapter>
 		<QueryClientProvider client={queryClient}>

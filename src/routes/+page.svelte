@@ -28,10 +28,6 @@
 				Explore Playlists
 				<ArrowRight size={16} />
 			</a>
-			<a href="/sign-in" class="secondary rounded-full">
-				Sign Up
-				<ArrowUpRight size={16} />
-			</a>
 		</div>
 	</div>
 </section>
