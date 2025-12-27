@@ -1,38 +1,54 @@
-# sv
+# PlaylistHub - Share and discover music playlists by others
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+PlaylistHub is a platform to discover music playlists by others and also share yours !
+Built this for my fellow music lovers who might be interested in discovering what others are listening across platforms (Apple Music, Spotify and YouTube Music)
 
-## Creating a project
+**Platforms Supported**
 
-If you're seeing this, you've probably already done this step. Congrats!
+- ✅ YouTube Music
+- ✅ Spotify
+- ✅ Apple Music
+- ❌ SoundCloud (not yet, soon)
 
-```sh
-# create a new project in the current directory
-npx sv create
+**🛠️ Tech Stack**
 
-# create a new project in my-app
-npx sv create my-app
-```
+- Sveltekit
+- SQLite + Drizzle ORM
+- Better-auth for auth
+- Tanstack Query
+- Nuqs for URL state management
+- ShadCN UI + TailwindCSS
 
-## Developing
+✨ **Nice Features**
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- Search or filter by **genres** and **platform**
+- Sort by **latest** or most **popular**
+- Like your favorite playlist
 
-```sh
-npm run dev
+👨‍💻 **Some Technical Features**
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+- Optimistic likes on the UI using Tanstack Mutation query, so liking a playlist is instant on the UI and in the case an error occurs all updates are rolled back with some nice toast messages !
+- Complete auth protection for user specific API routes, user session is checked and if unauthorized then action won’t be done. Must be logged in to upload or like a playlist.
+- Also composability in the code, good SOC practices and keeping the UI logic separate from the business logic
 
-## Building
+**PREVIEWS**
 
-To create a production version of your app:
+## Homepage
 
-```sh
-npm run build
-```
+![Homepage](demo-imgs/playlisthub-homepage.png)
 
-You can preview the production build with `npm run preview`.
+## Playlists View
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+![Playlists View](demo-imgs/playlist-hub-playlists-view.png)
+
+## Upload Playlist
+
+![Upload Playlist](demo-imgs/upload-playlist.png)
+
+## Filter Options
+
+![Filter Options](demo-imgs/filter.jpg)
+
+## Active Filters
+
+![Active Filters](demo-imgs/filters-active.png)
