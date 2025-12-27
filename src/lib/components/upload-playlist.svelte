@@ -45,13 +45,15 @@
 		}
 	}
 
-	$inspect({
-		uploadModalStore
-	});
+	$inspect({ formData });
 </script>
 
 <Dialog.Root bind:open={uploadModalStore.open} onOpenChange={handleOpenChange}>
-	<Dialog.Trigger class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4')}>
+	<Dialog.Trigger
+		title={!$session.data?.user ? 'Please login to upload a playlist' : 'Upload your Playlist'}
+		disabled={!$session.data?.user}
+		class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4')}
+	>
 		<Plus size={17} strokeWidth={2.5} />
 		Upload Playlist
 	</Dialog.Trigger>
@@ -156,6 +158,7 @@
 						disabled={isLoadingPlaylistInfo || isEdit}
 						id="url"
 						name="url"
+						type="url"
 						placeholder="Enter playlist URL"
 						bind:value={formData.playlistUrl}
 					/>

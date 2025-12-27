@@ -40,11 +40,12 @@ export function usePlaylistForm(userId: string) {
 		}
 	});
 
-	const { data: playlistInfo, isLoading: isLoadingPlaylistInfo } = usePlaylistInfo({
+	// Using $derived to ensure the playlistInfo query is re-run when the formData changes
+	const { data: playlistInfo, isLoading: isLoadingPlaylistInfo } = $derived(usePlaylistInfo({
 		url: formData.playlistUrl,
 		platform: formData.selectedPlatform!,
 		isEdit
-	});
+	}));
 
 	$effect(() => {
 		if (playlistInfo && !isEdit) {
