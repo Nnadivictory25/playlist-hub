@@ -13,7 +13,7 @@ export function useUpload() {
 			const newPlaylist: NewPlaylist = {
 				userId: data.userId,
 				name: data.formData.playlistName,
-				description: data.playlistInfo.description,
+				description: data.formData.playlistDescription,
 				imageUrl: data.playlistInfo.imageUrl,
 				platform: data.formData.selectedPlatform!,
 				genre: data.formData.selectedGenres,
