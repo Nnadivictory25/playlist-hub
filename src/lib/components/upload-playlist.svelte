@@ -44,8 +44,6 @@
 			playlistModal.openUploadModal();
 		}
 	}
-
-	$inspect({ formData });
 </script>
 
 <Dialog.Root bind:open={uploadModalStore.open} onOpenChange={handleOpenChange}>

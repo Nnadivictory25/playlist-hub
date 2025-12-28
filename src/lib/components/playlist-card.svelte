@@ -12,6 +12,7 @@
 	import { fade } from 'svelte/transition';
 	import Badge from './ui/badge/badge.svelte';
 	import * as Tooltip from './ui/tooltip/index.js';
+	import { cn } from '../utils';
 
 	type PlaylistCardProps = {
 		playlist: Playlist;
@@ -73,19 +74,26 @@
 				<div>
 					<p class="text-base font-medium">{playlist.name}</p>
 					<div class="relative">
-						<p bind:this={descriptionEl} class="line-clamp-2 text-sm text-gray-700">
+						<p
+							bind:this={descriptionEl}
+							class={cn('line-clamp-2 text-sm text-gray-700', isClamped && 'cursor-none')}
+						>
 							{playlist.description ?? ''}
 						</p>
 						{#if isClamped && playlist.description}
 							<Tooltip.Root delayDuration={300}>
 								<Tooltip.Trigger
-									class="absolute inset-0 cursor-help"
+									class="absolute inset-0 cursor-none!"
 									aria-label="View full description"
 								>
 									<span class="sr-only">{playlist.description}</span>
 								</Tooltip.Trigger>
-								<Tooltip.Content>
-									{playlist.description}
+								<Tooltip.Content
+									side="bottom"
+									align="center"
+									class="max-w-[300px] border bg-white text-center text-black shadow-md"
+								>
+									{playlist.description.trim()}
 								</Tooltip.Content>
 							</Tooltip.Root>
 						{/if}
