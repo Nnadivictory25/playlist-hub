@@ -12,8 +12,8 @@
 	position="top-center"
 	toastOptions={{
 		classes: {
-			success: 'bg-green-700! text-white! border-green-600!',
-			error: 'bg-red-700! text-white! border-red-600!'
+			success: 'bg-green-700! text-white! border-green-600! w-fit!',
+			error: 'bg-red-700! text-white! border-red-600! w-fit!'
 		}
 	}}
 	{...restProps}
