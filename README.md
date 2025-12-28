@@ -64,7 +64,3 @@ Built this for my fellow music lovers who might be interested in discovering wha
 🎵 **Supported Genres**
 
 Afrobeat, Alternative, Ambient, Blues, Classical, Country, Dance, Electronic, Folk, Funk, Gospel, Hip-Hop, House, Indie, Jazz, Latin, Metal, Pop, Punk, R&B, Rap, Reggae, Rock, Soul, Techno, Trap, World
-
----
-
-Built with ❤️ by [@Victory](https://x.com/nnvictory001)
