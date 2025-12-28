@@ -129,7 +129,10 @@
 									class="relative cursor-pointer"
 								/>
 							</DropdownMenu.Trigger>
-							<DropdownMenu.Content class="max-h-60 w-70 overflow-y-auto">
+							<DropdownMenu.Content
+								class="max-h-60 min-w-[var(--bits-dropdown-menu-anchor-width)] overflow-y-auto"
+								align="start"
+							>
 								{#each genres as genre (genre)}
 									<DropdownMenu.Item
 										class="cursor-pointer justify-between"
