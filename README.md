@@ -15,7 +15,7 @@ Built this for my fellow music lovers who might be interested in discovering wha
 **🛠️ Tech Stack**
 
 - Sveltekit
-- SQLite + Drizzle ORM
+- SQLite Database + Drizzle ORM
 - Better-auth for auth
 - Tanstack Query
 - Nuqs for URL state management
