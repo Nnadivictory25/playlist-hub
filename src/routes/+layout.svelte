@@ -8,6 +8,7 @@
 	import type { LayoutProps } from './$types';
 	import { browser } from '$app/environment';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -40,11 +41,13 @@
 </svelte:head>
 
 <Toaster />
-<main class="mx-auto max-w-6xl px-7 pt-16 pb-10">
+<main class="mx-auto max-w-7xl px-7 pt-16 pb-10">
 	<Navbar isSignedIn={data.isSignedIn} />
-	<NuqsAdapter>
-		<QueryClientProvider client={queryClient}>
-			{@render children()}
-		</QueryClientProvider>
-	</NuqsAdapter>
+	<Tooltip.Provider>
+		<NuqsAdapter>
+			<QueryClientProvider client={queryClient}>
+				{@render children()}
+			</QueryClientProvider>
+		</NuqsAdapter>
+	</Tooltip.Provider>
 </main>

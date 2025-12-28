@@ -10,6 +10,8 @@
 	import { useQueryClient } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
+	import Badge from './ui/badge/badge.svelte';
+	import * as Tooltip from './ui/tooltip/index.js';
 
 	type PlaylistCardProps = {
 		playlist: Playlist;
@@ -28,6 +30,10 @@
 	});
 
 	let isAnimating = $state(false);
+	let descriptionEl: HTMLParagraphElement | undefined = $state();
+	let isClamped = $derived(
+		descriptionEl ? descriptionEl.scrollHeight > descriptionEl.clientHeight : false
+	);
 
 	const handleLike = () => {
 		if (!userId) {
@@ -39,10 +45,9 @@
 		setTimeout(() => (isAnimating = false), 600);
 	};
 
-	const truncateDescription = (text: string, maxLength = 85) => {
-		if (text.length <= maxLength) return text;
-		return text.slice(0, maxLength).trim() + '...';
-	};
+	// const truncateDescription = (text: string, maxLength = 100) => {
+	// 	return text.length > maxLength ? text.slice(0, maxLength).trim() + '...' : text;
+	// };
 </script>
 
 <div transition:fade={{ duration: 100 }}>
@@ -67,7 +72,31 @@
 			<div class="flex flex-1 flex-col justify-between p-3">
 				<div>
 					<p class="text-base font-medium">{playlist.name}</p>
-					<p class="text-sm text-gray-700">{truncateDescription(playlist.description ?? '')}</p>
+					<div class="relative">
+						<p bind:this={descriptionEl} class="line-clamp-2 text-sm text-gray-700">
+							{playlist.description ?? ''}
+						</p>
+						{#if isClamped && playlist.description}
+							<Tooltip.Root delayDuration={300}>
+								<Tooltip.Trigger
+									class="absolute inset-0 cursor-help"
+									aria-label="View full description"
+								>
+									<span class="sr-only">{playlist.description}</span>
+								</Tooltip.Trigger>
+								<Tooltip.Content>
+									{playlist.description}
+								</Tooltip.Content>
+							</Tooltip.Root>
+						{/if}
+					</div>
+					<div class="mt-5 flex flex-wrap gap-2">
+						{#each playlist.genre as genre}
+							<Badge variant="outline" class="border-none bg-primary/10 text-xs text-primary"
+								>#{genre}</Badge
+							>
+						{/each}
+					</div>
 				</div>
 
 				<div class="mt-auto pt-5">
