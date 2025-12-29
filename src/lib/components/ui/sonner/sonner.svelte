@@ -12,8 +12,10 @@
 	position="top-center"
 	toastOptions={{
 		classes: {
-			success: 'bg-green-700! text-white! border-green-600! w-fit!',
-			error: 'bg-red-700! text-white! border-red-600! w-fit!'
+			success:
+				'bg-green-100! text-green-900! border-green-200! block w-fit mx-auto! dark:bg-green-900/60! dark:text-green-100! dark:border-green-800!',
+			error:
+				'bg-red-100! text-red-900! border-red-200! block w-fit mx-auto! dark:bg-red-900/60! dark:text-red-100! dark:border-red-800!'
 		}
 	}}
 	{...restProps}
