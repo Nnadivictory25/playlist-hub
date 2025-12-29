@@ -40,6 +40,12 @@
 
 	function handleOpenChange(open: boolean) {
 		if (open) {
+			// Only reset when opening for upload, not for edit
+			if (uploadModalStore.mode === 'edit') {
+				// Don't reset - playlist is already set by openEditModal
+				return;
+			}
+			// Reset and set upload mode for new uploads
 			resetForm();
 			playlistModal.openUploadModal();
 		}
