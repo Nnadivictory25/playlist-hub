@@ -47,7 +47,7 @@ Built this for my fellow music lovers who might be interested in discovering wha
 
 ## Playlists View
 
-![Playlists View](demo-imgs/playlist-hub-playlists-view.png)
+![Playlists View](demo-imgs/playlists-view.png)
 
 ## Upload Playlist
 
