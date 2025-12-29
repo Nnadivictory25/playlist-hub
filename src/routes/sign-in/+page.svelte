@@ -20,6 +20,12 @@
 				isLoading = false;
 			});
 	}
+
+	$effect(() => {
+		return () => {
+			isLoading = false;
+		};
+	});
 </script>
 
 <section class="flex min-h-[65vh] items-center justify-center pt-20">
