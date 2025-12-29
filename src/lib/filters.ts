@@ -16,6 +16,8 @@ export type Genre =
 	| 'Indie'
 	| 'Jazz'
 	| 'Latin'
+	| 'Highlife'
+	| 'Amapiano'
 	| 'Metal'
 	| 'Pop'
 	| 'Punk'
@@ -73,6 +75,8 @@ export const genres: readonly Genre[] = [
 	'Indie',
 	'Jazz',
 	'Latin',
+	'Highlife',
+	'Amapiano',
 	'Metal',
 	'Pop',
 	'Punk',
