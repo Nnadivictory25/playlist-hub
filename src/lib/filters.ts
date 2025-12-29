@@ -1,8 +1,9 @@
 // Genre type for type safety
 export type Genre =
 	| 'Afrobeat'
-	| 'Alternative'
+	| 'Amapiano'
 	| 'Ambient'
+	| 'Alternative'
 	| 'Blues'
 	| 'Classical'
 	| 'Country'
@@ -11,13 +12,12 @@ export type Genre =
 	| 'Folk'
 	| 'Funk'
 	| 'Gospel'
+	| 'Highlife'
 	| 'Hip-Hop'
 	| 'House'
 	| 'Indie'
 	| 'Jazz'
 	| 'Latin'
-	| 'Highlife'
-	| 'Amapiano'
 	| 'Metal'
 	| 'Pop'
 	| 'Punk'
@@ -60,8 +60,9 @@ export function urlToPlatform(urlValue: string): Platform | null {
 // Array of all available genres (for UI dropdowns, validation, etc.)
 export const genres: readonly Genre[] = [
 	'Afrobeat',
-	'Alternative',
+	'Amapiano',
 	'Ambient',
+	'Alternative',
 	'Blues',
 	'Classical',
 	'Country',
@@ -70,13 +71,12 @@ export const genres: readonly Genre[] = [
 	'Folk',
 	'Funk',
 	'Gospel',
+	'Highlife',
 	'Hip-Hop',
 	'House',
 	'Indie',
 	'Jazz',
 	'Latin',
-	'Highlife',
-	'Amapiano',
 	'Metal',
 	'Pop',
 	'Punk',
