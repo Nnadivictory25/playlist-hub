@@ -32,11 +32,16 @@ export function usePlaylistForm(userId: string) {
 
 	$effect(() => {
 		if (uploadModalStore.playlist && isEdit) {
-			formData.playlistName = uploadModalStore.playlist.name;
-			formData.playlistDescription = uploadModalStore.playlist.description;
-			formData.playlistUrl = uploadModalStore.playlist.url;
-			formData.selectedPlatform = uploadModalStore.playlist.platform as Platform;
-			formData.selectedGenres = uploadModalStore.playlist.genre;
+			formData = {
+				playlistName: uploadModalStore.playlist.name,
+				playlistDescription: uploadModalStore.playlist.description,
+				playlistUrl: uploadModalStore.playlist.url,
+				selectedPlatform: uploadModalStore.playlist.platform as Platform,
+				selectedGenres: uploadModalStore.playlist.genre
+			};
+		} else {
+			// if not edit, reset form 
+			resetForm();
 		}
 	});
 
@@ -129,6 +134,7 @@ export function usePlaylistForm(userId: string) {
 			toast.error((error as Error).message);
 		} finally {
 			isSubmitting = false;
+			resetForm();
 		}
 	}
 
@@ -147,7 +153,6 @@ export function usePlaylistForm(userId: string) {
 		set genreDropdownOpen(value: boolean) { genreDropdownOpen = value; },
 		toggleGenre,
 		isGenreSelected,
-		resetForm,
 		handleSubmit
 	};
 }

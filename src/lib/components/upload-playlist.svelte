@@ -32,35 +32,24 @@
 		genreDropdownOpen,
 		toggleGenre,
 		isGenreSelected,
-		resetForm,
 		handleSubmit
 	} = $derived(usePlaylistForm(userId));
 
 	const playlistModal = usePlaylistModal();
 
-	function handleOpenChange(open: boolean) {
-		if (open) {
-			// Only reset when opening for upload, not for edit
-			if (uploadModalStore.mode === 'edit') {
-				// Don't reset - playlist is already set by openEditModal
-				return;
-			}
-			// Reset and set upload mode for new uploads
-			resetForm();
-			playlistModal.openUploadModal();
-		}
-	}
+	// $inspect({ formData, uploadModalStore });
 </script>
 
-<Dialog.Root bind:open={uploadModalStore.open} onOpenChange={handleOpenChange}>
-	<Dialog.Trigger
+<Dialog.Root bind:open={uploadModalStore.open}>
+	<Button
 		title={!$session.data?.user ? 'Please login to upload a playlist' : 'Upload your Playlist'}
 		disabled={!$session.data?.user}
-		class={cn(buttonVariants({ variant: 'default' }), 'h-8 cursor-pointer px-4')}
+		class="h-8 cursor-pointer px-4"
+		onclick={playlistModal.openUploadModal}
 	>
 		<Plus size={17} strokeWidth={2.5} />
 		Upload Playlist
-	</Dialog.Trigger>
+	</Button>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<form onsubmit={handleSubmit}>
 			<Dialog.Header>
