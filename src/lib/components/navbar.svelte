@@ -5,7 +5,7 @@
 </script>
 
 <nav
-	class="fixed top-10 left-1/2 z-20 mx-auto flex w-[90%] max-w-[550px] -translate-x-1/2 items-center justify-between rounded-full bg-white/20 px-8 py-3"
+	class="fixed top-10 left-1/2 z-50 mx-auto flex w-[90%] max-w-[550px] -translate-x-1/2 items-center justify-between rounded-full bg-white/20 px-8 py-3"
 >
 	<a href="/" class="flex items-center gap-1">
 		<div class="flex size-9 items-center justify-center rounded-md bg-primary text-white">

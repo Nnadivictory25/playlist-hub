@@ -47,7 +47,7 @@
 </svelte:head>
 
 <Toaster />
-<main class="mx-auto max-w-7xl px-7 pt-16 pb-10">
+<main class="mx-auto max-w-7xl px-7 pt-10 pb-10">
 	<Navbar isSignedIn={data.isSignedIn} />
 	<Tooltip.Provider>
 		<NuqsAdapter>
