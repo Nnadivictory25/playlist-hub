@@ -1,3 +1,5 @@
+DROP TRIGGER IF EXISTS update_playlist_likes_on_insert;--> statement-breakpoint
+DROP TRIGGER IF EXISTS update_playlist_likes_on_delete;--> statement-breakpoint
 PRAGMA foreign_keys=OFF;--> statement-breakpoint
 CREATE TABLE `__new_playlists` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -22,4 +24,28 @@ PRAGMA foreign_keys=ON;--> statement-breakpoint
 CREATE INDEX `playlists_name_idx` ON `playlists` (`name`);--> statement-breakpoint
 CREATE INDEX `playlists_description_idx` ON `playlists` (`description`);--> statement-breakpoint
 ALTER TABLE `users` ADD `username` text;--> statement-breakpoint
-CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);
+CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);--> statement-breakpoint
+CREATE TRIGGER update_playlist_likes_on_insert
+AFTER INSERT ON playlist_likes
+FOR EACH ROW
+BEGIN
+	UPDATE playlists 
+	SET likes = (
+		SELECT COUNT(*) 
+		FROM playlist_likes 
+		WHERE playlist_id = NEW.playlist_id
+	)
+	WHERE id = NEW.playlist_id;
+END;--> statement-breakpoint
+CREATE TRIGGER update_playlist_likes_on_delete
+AFTER DELETE ON playlist_likes
+FOR EACH ROW
+BEGIN
+	UPDATE playlists 
+	SET likes = (
+		SELECT COUNT(*) 
+		FROM playlist_likes 
+		WHERE playlist_id = OLD.playlist_id
+	)
+	WHERE id = OLD.playlist_id;
+END;
