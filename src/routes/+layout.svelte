@@ -9,8 +9,6 @@
 	import { browser } from '$app/environment';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import Clarity from '@microsoft/clarity';
-	import { onMount } from 'svelte';
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -24,10 +22,6 @@
 	const title = 'PlaylistHub - Discover and share your favorite playlists';
 	const description =
 		'Explore new music, get inspired by others, and add your own playlists to the community.';
-
-	onMount(() => {
-		Clarity.init('utmccmsjwo');
-	});
 </script>
 
 <svelte:head>
@@ -44,6 +38,21 @@
 	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image" content="https://playlisthub.online/og.png" />
 	<link rel="canonical" href="https://playlisthub.online" />
+
+	<script type="text/javascript">
+		(function (c, l, a, r, i, t, y) {
+			c[a] =
+				c[a] ||
+				function () {
+					(c[a].q = c[a].q || []).push(arguments);
+				};
+			t = l.createElement(r);
+			t.async = 1;
+			t.src = 'https://www.clarity.ms/tag/' + i;
+			y = l.getElementsByTagName(r)[0];
+			y.parentNode.insertBefore(t, y);
+		})(window, document, 'clarity', 'script', 'utmccmsjwo');
+	</script>
 </svelte:head>
 
 <Toaster />
