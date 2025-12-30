@@ -9,6 +9,8 @@
 	import { browser } from '$app/environment';
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import Clarity from '@microsoft/clarity';
+	import { onMount } from 'svelte';
 
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -22,6 +24,10 @@
 	const title = 'PlaylistHub - Discover and share your favorite playlists';
 	const description =
 		'Explore new music, get inspired by others, and add your own playlists to the community.';
+
+	onMount(() => {
+		Clarity.init('utmccmsjwo');
+	});
 </script>
 
 <svelte:head>

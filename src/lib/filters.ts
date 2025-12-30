@@ -4,12 +4,14 @@ export type Genre =
 	| 'Amapiano'
 	| 'Ambient'
 	| 'Alternative'
+	| 'Apala'
 	| 'Blues'
 	| 'Classical'
 	| 'Country'
 	| 'Dance'
 	| 'Electronic'
 	| 'Folk'
+	| 'Fuji'
 	| 'Funk'
 	| 'Gospel'
 	| 'Highlife'
@@ -63,12 +65,14 @@ export const genres: readonly Genre[] = [
 	'Amapiano',
 	'Ambient',
 	'Alternative',
+	'Apala',
 	'Blues',
 	'Classical',
 	'Country',
 	'Dance',
 	'Electronic',
 	'Folk',
+	'Fuji',
 	'Funk',
 	'Gospel',
 	'Highlife',
