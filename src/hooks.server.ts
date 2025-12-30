@@ -15,5 +15,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.user = session.user;
 	}
 
-	return svelteKitHandler({ event, resolve, auth, building });
+	const response = await svelteKitHandler({ event, resolve, auth, building });
+
+	// Cache images and static assets for 1 year
+	if (event.url.pathname.match(/\.(png|jpg|jpeg|webp|gif|svg|ico|woff|woff2|ttf|eot)$/)) {
+		response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+	}
+
+	return response;
 };

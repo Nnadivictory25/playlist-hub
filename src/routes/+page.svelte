@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { ArrowRight, ArrowUpRight, Star } from '@lucide/svelte';
+	import spotifyLogo from '$lib/assets/spotify-logo-3d.webp';
+	import youtubeLogo from '$lib/assets/youtube-music-3d.webp';
+	import appleLogo from '$lib/assets/apple-music-3d.webp';
 </script>
 
 <div class="grid-bg fixed inset-0 -z-20"></div>
 <section class="relative pt-35">
 	<div class="images">
-		<img src="/spotify-logo-3d.webp" alt="Spotify 3d" class="floating-1" />
-		<img src="/youtube-music-3d.webp" alt="YouTube Music 3d" class="floating-2" />
-		<img src="/apple-music-3d.webp" alt="Apple Music 3d" class="floating-3" />
+		<img src={spotifyLogo} alt="Spotify 3d" class="floating-1" />
+		<img src={youtubeLogo} alt="YouTube Music 3d" class="floating-2" />
+		<img src={appleLogo} alt="Apple Music 3d" class="floating-3" />
 	</div>
 	<div
 		class="mx-auto flex w-fit items-center justify-center gap-2 rounded-full border border-amber-200 bg-linear-to-r from-amber-50 to-yellow-50 px-4 py-2 text-sm font-medium text-amber-700"
