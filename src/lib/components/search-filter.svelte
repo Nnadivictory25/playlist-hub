@@ -9,7 +9,7 @@
 	import { useQueryStates } from 'nuqs-svelte';
 	import Badge from './ui/badge/badge.svelte';
 	import { Input } from './ui/input';
-	import CreatePlaylist from './upload-playlist.svelte';
+	import UploadPlaylist from './upload-playlist.svelte';
 
 	const { query }: { query: ReturnType<typeof useQueryStates<typeof playlistsQueryParser>> } =
 		$props();
@@ -151,7 +151,7 @@
 			/>
 		</div>
 
-		<div class="flex items-center gap-2">
+		<div class="flex flex-wrap items-center gap-2 gap-y-5">
 			{#each sortOptions as sortOption, i (sortOption)}
 				<Badge
 					variant="outline"
@@ -169,7 +169,7 @@
 					{capitalize(sortOption)}
 				</Badge>
 			{/each}
-			<CreatePlaylist />
+			<UploadPlaylist />
 		</div>
 	</div>
 

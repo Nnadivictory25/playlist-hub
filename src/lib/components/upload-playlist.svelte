@@ -44,7 +44,7 @@
 	<Button
 		title={!$session.data?.user ? 'Please login to upload a playlist' : 'Upload your Playlist'}
 		disabled={!$session.data?.user}
-		class="h-8 cursor-pointer px-4"
+		class="h-8 w-full cursor-pointer px-4 lg:w-auto"
 		onclick={playlistModal.openUploadModal}
 	>
 		<Plus size={17} strokeWidth={2.5} />
