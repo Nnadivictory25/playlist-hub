@@ -5,7 +5,7 @@
 </script>
 
 <nav
-	class="fixed top-10 left-1/2 z-50 mx-auto flex w-[90%] max-w-[550px] -translate-x-1/2 items-center justify-between rounded-full border border-gray-300/30 px-8 py-3 backdrop-blur-lg"
+	class="fixed top-10 left-1/2 z-50 mx-auto flex w-[90%] max-w-[550px] -translate-x-1/2 items-center justify-between rounded-full border border-gray-300/30 bg-white/30 px-8 py-3 backdrop-blur-lg"
 >
 	<a
 		href="/"
