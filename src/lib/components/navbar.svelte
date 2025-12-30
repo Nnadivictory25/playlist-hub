@@ -5,7 +5,7 @@
 </script>
 
 <nav
-	class="fixed top-10 left-1/2 z-50 mx-auto flex w-[90%] max-w-[550px] -translate-x-1/2 items-center justify-between rounded-full bg-white/20 px-8 py-3"
+	class="fixed top-10 left-1/2 z-50 mx-auto flex w-[90%] max-w-[550px] -translate-x-1/2 items-center justify-between rounded-full border border-gray-300/30 px-8 py-3 backdrop-blur-lg"
 >
 	<a href="/" class="flex items-center gap-1">
 		<div class="flex size-9 items-center justify-center rounded-md bg-primary text-white">
@@ -25,20 +25,6 @@
 
 <style>
 	@import 'tailwindcss/theme';
-
-	nav {
-		box-shadow: 0 4px 55px rgba(0, 0, 0, 0.1);
-		background-color: rgba(255, 255, 255, 0.3);
-		backdrop-filter: blur(15px);
-		-webkit-backdrop-filter: blur(15px);
-		border: 1px solid rgba(255, 255, 255, 0.2);
-	}
-
-	@supports not ((backdrop-filter: blur(15px)) or (-webkit-backdrop-filter: blur(15px))) {
-		nav {
-			background-color: rgb(255, 255, 255);
-		}
-	}
 
 	a {
 		@apply transition-all duration-100 hover:opacity-80;
