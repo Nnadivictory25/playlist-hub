@@ -120,10 +120,26 @@ export function useMutateLike({ userId, queryClient }: UseMutateLikeProps) {
 		},
 
 		onSettled: () => {
-			// Invalidate all playlist-related queries
-			for (const pattern of playlistQueryPatterns) {
-				queryClient.invalidateQueries({ queryKey: pattern });
-			}
+			// For playlists queries sorted by 'popular', don't invalidate or re-sort
+			// This keeps the playlist in place while the like count updates
+			// The list will naturally re-sort on the next fetch (filter change, pagination, etc.)
+			const playlistsQueries = queryClient.getQueriesData({ queryKey: ['playlists'] });
+
+			playlistsQueries.forEach(([queryKey]) => {
+				// Extract sortBy from query key (format: ['playlists', userId, params])
+				const params = (queryKey as unknown[])[2] as { sortBy?: 'latest' | 'popular' } | undefined;
+				const sortBy = params?.sortBy;
+
+				// Only invalidate if NOT sorted by 'popular'
+				// When sorted by 'popular', we keep the optimistic update but don't re-sort
+				// This prevents playlists from jumping around immediately after liking
+				if (sortBy !== 'popular') {
+					queryClient.invalidateQueries({ queryKey });
+				}
+			});
+
+			// Always invalidate user-dashboard queries
+			queryClient.invalidateQueries({ queryKey: ['user-dashboard'] });
 		}
 	}));
 }
