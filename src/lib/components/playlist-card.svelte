@@ -9,10 +9,12 @@
 	import { ArrowUpRightIcon, Clock, Music } from '@lucide/svelte';
 	import { useQueryClient } from '@tanstack/svelte-query';
 	import { toast } from 'svelte-sonner';
-	import { fade } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import Badge from './ui/badge/badge.svelte';
-	import * as Tooltip from './ui/tooltip/index.js';
 	import { cn } from '../utils';
+	import Button from './ui/button/button.svelte';
+
+	const MAX_GENRES = 4;
 
 	type PlaylistCardProps = {
 		playlist: Playlist;
@@ -31,10 +33,22 @@
 	});
 
 	let isAnimating = $state(false);
+
 	let descriptionEl: HTMLParagraphElement | undefined = $state();
+
 	let isClamped = $derived(
 		descriptionEl ? descriptionEl.scrollHeight > descriptionEl.clientHeight : false
 	);
+	let isDescriptionExpanded = $state(false);
+	let isGenresExpanded = $state(false);
+
+	function toggleDescriptionExpanded() {
+		isDescriptionExpanded = !isDescriptionExpanded;
+	}
+
+	function toggleGenresExpanded() {
+		isGenresExpanded = !isGenresExpanded;
+	}
 
 	const handleLike = () => {
 		if (!userId) {
@@ -45,10 +59,6 @@
 		toggleLike(playlist.id);
 		setTimeout(() => (isAnimating = false), 600);
 	};
-
-	// const truncateDescription = (text: string, maxLength = 100) => {
-	// 	return text.length > maxLength ? text.slice(0, maxLength).trim() + '...' : text;
-	// };
 </script>
 
 <div transition:fade={{ duration: 100 }}>
@@ -74,36 +84,37 @@
 				<div>
 					<p class="text-base font-medium">{playlist.name}</p>
 					<div class="relative">
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 						<p
+							title={playlist.description}
 							bind:this={descriptionEl}
-							class={cn('line-clamp-2 text-sm text-gray-700', isClamped && 'cursor-none')}
+							onclick={toggleDescriptionExpanded}
+							class={cn(
+								'line-clamp-2 text-sm text-gray-700',
+								isDescriptionExpanded && 'line-clamp-none'
+							)}
 						>
 							{playlist.description ?? ''}
 						</p>
-						{#if isClamped && playlist.description}
-							<Tooltip.Root delayDuration={300}>
-								<Tooltip.Trigger
-									class="absolute inset-0 cursor-none!"
-									aria-label="View full description"
-								>
-									<span class="sr-only">{playlist.description}</span>
-								</Tooltip.Trigger>
-								<Tooltip.Content
-									side="bottom"
-									align="center"
-									class="max-w-[300px] border bg-white text-center text-black shadow-md"
-								>
-									{playlist.description.trim()}
-								</Tooltip.Content>
-							</Tooltip.Root>
-						{/if}
 					</div>
 					<div class="mt-5 flex flex-wrap gap-2">
-						{#each playlist.genre as genre}
-							<Badge variant="outline" class="border-none bg-primary/10 text-xs text-primary"
-								>#{genre}</Badge
-							>
+						{#each playlist.genre.slice(0, isGenresExpanded ? playlist.genre.length : MAX_GENRES) as genre, i (genre)}
+							<div in:fly={{ y: -10, delay: i * 20 }}>
+								<Badge variant="outline" class="border-none bg-primary/10 text-xs text-primary">
+									#{genre}
+								</Badge>
+							</div>
 						{/each}
+						{#if playlist.genre.length > MAX_GENRES}
+							<Badge
+								variant="outline"
+								class="w-fit cursor-pointer border! border-primary bg-primary/10 text-xs text-primary hover:bg-primary/20"
+								onclick={toggleGenresExpanded}
+							>
+								{isGenresExpanded ? 'Show less' : `+${playlist.genre.length - MAX_GENRES}`}
+							</Badge>
+						{/if}
 					</div>
 				</div>
 

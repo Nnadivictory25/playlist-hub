@@ -50,7 +50,7 @@
 		<Plus size={17} strokeWidth={2.5} />
 		Upload Playlist
 	</Button>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="max-h-[80vh] overflow-y-auto sm:max-w-[425px]">
 		<form onsubmit={handleSubmit}>
 			<Dialog.Header>
 				<Dialog.Title>{isEdit ? 'Edit Playlist' : 'Upload Playlist'}</Dialog.Title>
