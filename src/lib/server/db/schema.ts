@@ -84,6 +84,7 @@ export const users = sqliteTable('users', {
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
 	country: text('country'),
+	username: text('username').unique(),
 	emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
 	image: text('image'),
 	...timestamps

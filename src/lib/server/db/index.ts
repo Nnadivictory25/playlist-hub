@@ -1,13 +1,14 @@
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
-import { env } from '$env/dynamic/private';
-import { resolve } from 'path';
+
+import { Database } from 'bun:sqlite';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
 import * as schema from './schema';
 
-let url = env.DATABASE_URL || 'local.db';
-const absolutePath = resolve(url);
-url = `file://${absolutePath}`;
+const url = process.env.DATABASE_URL || 'local.db';
 
-export const dbClient = createClient({ url });
+if (!url) {
+    throw new Error('DATABASE_URL is not set');
+}
+
+export const dbClient = new Database(url);
 
 export const db = drizzle(dbClient, { schema });

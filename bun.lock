@@ -6,7 +6,6 @@
       "name": "share-playlist",
       "dependencies": {
         "@fontsource-variable/rubik": "^5.2.8",
-        "@libsql/client": "^0.15.15",
         "@tanstack/svelte-query": "^6.0.10",
         "better-auth": "^1.4.7",
         "linkedom": "^0.18.12",
